@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Room Booking Bot · Slack Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#050816;
+      --surface:#0f172a;
+      --ink:#e2e8f0;
+      --muted:#94a3b8;
+      --line:rgba(148,163,184,0.2);
+      --accent:#7c3aed;
+      --accent-2:#22d3ee;
+      --accent-3:#f472b6;
+      --card:#0b1120;
+      --gradient:linear-gradient(135deg,#3b82f6 0%,#7c3aed 50%,#ec4899 100%);
+      --radius:20px;
+      --shadow:0 25px 80px rgba(15,23,42,0.45);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+      background:radial-gradient(circle at top,#0b1229 0%,#030618 60%,#000212 100%);
+      color:var(--ink);
+      min-height:100vh;
+      padding:0 24px 80px;
+    }
+    .blur{
+      position:fixed;
+      inset:auto auto -30% -20%;
+      width:60vw;
+      height:60vw;
+      background:#7c3aed33;
+      filter:blur(140px);
+      z-index:0;
+      pointer-events:none;
+    }
+    .nav{
+      position:sticky;
+      top:0;
+      backdrop-filter:blur(18px);
+      background:rgba(3,6,24,0.8);
+      border:1px solid rgba(148,163,184,0.08);
+      border-radius:999px;
+      padding:16px 28px;
+      margin:24px auto 32px;
+      width:100%;
+      max-width:1200px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      z-index:3;
+      box-shadow:0 10px 40px rgba(2,6,23,0.5);
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:700;
+      letter-spacing:0.02em;
+      color:#f8fafc;
+    }
+    .brand span{
+      display:inline-flex;
+      width:36px;
+      height:36px;
+      border-radius:12px;
+      background:var(--gradient);
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
+      font-size:18px;
+      color:#fff;
+      box-shadow:0 12px 30px rgba(124,58,237,0.45);
+    }
+    .nav-actions{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .btn{
+      border:0;
+      border-radius:999px;
+      padding:10px 20px;
+      font-size:14px;
+      font-weight:600;
+      cursor:pointer;
+      transition:transform .15s ease,box-shadow .15s ease,background .15s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .btn-primary{
+      background:var(--gradient);
+      color:#fff;
+      box-shadow:0 18px 40px rgba(91,33,182,0.45);
+    }
+    .btn-secondary{
+      background:rgba(148,163,184,0.12);
+      color:#e2e8f0;
+      border:1px solid rgba(148,163,184,0.35);
+    }
+    .btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 25px 65px rgba(14,24,52,0.65);
+    }
+    main{
+      max-width:1200px;
+      margin:0 auto;
+      display:flex;
+      flex-direction:column;
+      gap:48px;
+      z-index:1;
+      position:relative;
+    }
+    .hero{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:32px;
+      padding:48px;
+      border-radius:36px;
+      background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(12,10,24,0.9));
+      border:1px solid rgba(99,102,241,0.35);
+      box-shadow:var(--shadow);
+    }
+    .hero-content{
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    }
+    .eyebrow{
+      font-size:13px;
+      letter-spacing:0.2em;
+      text-transform:uppercase;
+      color:#a5b4fc;
+    }
+    h1{
+      font-size: clamp(2.4rem, 4vw, 3.4rem);
+      margin:0;
+      line-height:1.1;
+    }
+    .lead{
+      font-size:17px;
+      color:#cbd5f5;
+      max-width:540px;
+    }
+    .hero-metrics{
+      display:flex;
+      gap:18px;
+      flex-wrap:wrap;
+    }
+    .metric{
+      flex:1 1 120px;
+      background:rgba(2,6,23,0.55);
+      border:1px solid rgba(148,163,184,0.25);
+      border-radius:18px;
+      padding:18px;
+      text-align:left;
+    }
+    .metric span{
+      display:block;
+      font-size:32px;
+      font-weight:700;
+      margin-bottom:6px;
+      color:#bae6fd;
+    }
+    .metric small{
+      color:var(--muted);
+      font-weight:600;
+      letter-spacing:0.04em;
+    }
+    .hero-preview{
+      background:rgba(2,6,23,0.7);
+      border-radius:28px;
+      padding:24px;
+      border:1px solid rgba(148,163,184,0.2);
+      box-shadow:inset 0 0 0 1px rgba(124,58,237,0.25);
+    }
+    .slack-shell{
+      background:#0d111c;
+      border-radius:22px;
+      padding:20px;
+      border:1px solid rgba(255,255,255,0.06);
+      box-shadow:0 20px 60px rgba(0,0,0,0.45);
+    }
+    .slack-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:18px;
+      font-weight:600;
+    }
+    .slack-card{
+      background:#111a2c;
+      border-radius:18px;
+      padding:18px;
+      border:1px solid rgba(148,163,184,0.12);
+      margin-bottom:12px;
+    }
+    .slack-card h3{
+      margin:0 0 8px;
+      font-size:16px;
+    }
+    .slack-card p{
+      margin:0 0 14px;
+      font-size:13px;
+      color:#cbd5f5;
+    }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 12px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,0.3);
+      font-size:12px;
+      color:#e5edff;
+    }
+    .tag::before{
+      content:'●';
+      color:#34d399;
+      font-size:10px;
+    }
+    .features{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:20px;
+    }
+    .feature-card{
+      background:var(--card);
+      border-radius:24px;
+      padding:24px;
+      border:1px solid var(--line);
+      box-shadow:0 20px 60px rgba(2,6,23,0.45);
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      min-height:220px;
+    }
+    .feature-card h4{
+      margin:0;
+      font-size:18px;
+    }
+    .feature-card p{
+      margin:0;
+      color:#c7d7ff;
+      font-size:14px;
+    }
+    .feature-card a{
+      color:#c4b5fd;
+      font-weight:600;
+      text-decoration:none;
+      margin-top:auto;
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+    }
+    .layout{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:24px;
+      padding:40px;
+      border-radius:32px;
+      border:1px solid rgba(148,163,184,0.25);
+      background:rgba(2,6,23,0.65);
+    }
+    .layout h2{
+      margin:0 0 16px;
+      font-size:26px;
+    }
+    .steps{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+    .step{
+      padding:18px;
+      border-radius:18px;
+      border:1px solid rgba(148,163,184,0.2);
+      background:rgba(15,23,42,0.65);
+    }
+    .step strong{
+      display:block;
+      font-size:14px;
+      letter-spacing:0.08em;
+      color:#a5b4fc;
+      margin-bottom:6px;
+    }
+    .view-preview{
+      background:#0b1226;
+      border:1px solid rgba(124,58,237,0.25);
+      border-radius:24px;
+      padding:24px;
+      box-shadow:inset 0 0 0 1px rgba(62,70,93,0.5);
+    }
+    .view-block{
+      padding:16px;
+      border-radius:16px;
+      background:#111a2f;
+      border:1px solid rgba(148,163,184,0.18);
+      margin-bottom:12px;
+    }
+    .view-block:last-child{margin-bottom:0}
+    .workflow{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:18px;
+    }
+    .workflow-card{
+      background:rgba(2,6,23,0.65);
+      border:1px solid rgba(148,163,184,0.25);
+      border-radius:22px;
+      padding:22px;
+    }
+    .workflow-card span{
+      display:inline-flex;
+      width:42px;
+      height:42px;
+      border-radius:12px;
+      background:rgba(124,58,237,0.2);
+      color:#fff;
+      font-weight:700;
+      align-items:center;
+      justify-content:center;
+      margin-bottom:12px;
+    }
+    pre{
+      background:#030712;
+      border-radius:24px;
+      padding:28px;
+      font-size:13px;
+      line-height:1.65;
+      overflow:auto;
+      border:1px solid rgba(124,58,237,0.25);
+      color:#e0eaff;
+    }
+    code{font-family:"SFMono-Regular","Fira Code","IBM Plex Mono",monospace}
+    .doc-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:18px;
+    }
+    .doc-card{
+      padding:18px;
+      border-radius:20px;
+      border:1px solid rgba(148,163,184,0.2);
+      background:rgba(15,23,42,0.65);
+    }
+    .doc-card h5{
+      margin:0 0 10px;
+      font-size:15px;
+      color:#cbd5f5;
+    }
+    .doc-card a{
+      color:#34d399;
+      text-decoration:none;
+      font-weight:600;
+    }
+    .cta{
+      text-align:center;
+      padding:40px;
+      border-radius:28px;
+      border:1px solid rgba(52,211,153,0.35);
+      background:linear-gradient(120deg,rgba(52,211,153,0.12),rgba(14,165,233,0.12));
+    }
+    .cta h3{
+      margin:0 0 12px;
+      font-size:30px;
+    }
+    .cta p{
+      margin:0 auto 26px;
+      color:#d1fae5;
+      max-width:540px;
+    }
+    footer{
+      margin-top:32px;
+      text-align:center;
+      color:#64748b;
+      font-size:13px;
+    }
+    @media (max-width:720px){
+      body{padding:0 12px 60px}
+      .hero{padding:32px}
+      .nav{flex-direction:column;border-radius:28px}
+    }
+  </style>
+</head>
+<body>
+  <div class="blur" aria-hidden="true"></div>
+  <header class="nav">
+    <div class="brand">
+      <span>RB</span>
+      <div>
+        Room Booking Bot
+        <div style="font-size:12px;color:#94a3b8;font-weight:600;">Slack Home · Powered by Botkit</div>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <a class="btn btn-secondary" href="https://botkit.ai/docs/v4/" target="_blank" rel="noopener">Botkit Docs</a>
+      <a class="btn btn-primary" href="https://api.slack.com/apps" target="_blank" rel="noopener">Manage App</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <div class="eyebrow">Home experience</div>
+        <h1>Give every Slack user a concierge view of Office rooms.</h1>
+        <p class="lead">
+          Use Botkit’s <strong>App Home</strong> events and Block Kit utilities to project live availability,
+          quick booking shortcuts, and proactive reminders without altering the bot logic that powers notifications.
+        </p>
+        <div class="hero-metrics">
+          <div class="metric">
+            <span>+68%</span>
+            <small>Fewer DM requests</small>
+          </div>
+          <div class="metric">
+            <span>42s</span>
+            <small>Avg. booking time</small>
+          </div>
+          <div class="metric">
+            <span>100%</span>
+            <small>Bot logic reused</small>
+          </div>
+        </div>
+        <div class="nav-actions">
+          <a class="btn btn-primary" href="#code">View Home Payload</a>
+          <a class="btn btn-secondary" href="#docs">Documentation</a>
+        </div>
+      </div>
+      <div class="hero-preview" aria-label="Slack home preview">
+        <div class="slack-shell">
+          <div class="slack-header">
+            <span>🏢 Room Booking Bot</span>
+            <span class="tag">Live · Botkit</span>
+          </div>
+          <div class="slack-card">
+            <h3>Today’s Focus</h3>
+            <p>Pick a space, invite teammates, and let the Apps Script bot handle reminders.</p>
+            <div class="tag" style="margin-bottom:0;">Quick Actions</div>
+          </div>
+          <div class="slack-card">
+            <h3>Book a room</h3>
+            <p>Launch the web UI or post `/rooms`</p>
+            <div class="tag" style="background:rgba(34,211,238,0.15);border-color:rgba(34,211,238,0.4);">Open booking UI</div>
+          </div>
+          <div class="slack-card">
+            <h3>Upcoming bookings</h3>
+            <p>Room A · 2:00 – 3:00 PM · 4 guests</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features">
+      <article class="feature-card">
+        <h4>Home Tabs with Views API</h4>
+        <p>Use `controller.on('app_home_opened')` plus `controller.client.views.publish` to render personalized blocks sourced from the same Apps Script calendar.</p>
+        <a href="https://botkit.ai/docs/v4/bots/SlackBot.html#home-tabs" target="_blank" rel="noopener">
+          Botkit · Home Tabs →
+        </a>
+      </article>
+      <article class="feature-card">
+        <h4>Event Middleware</h4>
+        <p>Botkit middleware lets you hydrate booking metadata before rendering blocks. Keep notifications untouched while enriching the view context.</p>
+        <a href="https://botkit.ai/docs/v4/bots/core.html#event-middleware" target="_blank" rel="noopener">
+          Event pipeline →
+        </a>
+      </article>
+      <article class="feature-card">
+        <h4>Block Kit Components</h4>
+        <p>Compose sections, context, and button elements that deep-link into the existing web UI (`bookingAppUrl`). No changes to reminder logic required.</p>
+        <a href="https://api.slack.com/block-kit" target="_blank" rel="noopener">
+          Block Kit reference →
+        </a>
+      </article>
+    </section>
+
+    <section class="layout">
+      <div>
+        <h2>Home tab structure</h2>
+        <p class="lead" style="font-size:15px;">
+          The App Home mirrors the web dashboard: hero summary, quick actions, and a timeline. Everything is sourced from the existing Apps Script endpoints, so the core `bot.js` logic stays intact.
+        </p>
+        <div class="steps">
+          <div class="step">
+            <strong>01 · Listen</strong>
+            `controller.on('app_home_opened')` fires for each visit. Use the user ID to fetch preferences.
+          </div>
+          <div class="step">
+            <strong>02 · Compose</strong>
+            Assemble Block Kit arrays (sections, context, actions) fed by week grid data from `App.getWeekGrid`.
+          </div>
+          <div class="step">
+            <strong>03 · Publish</strong>
+            Call `controller.client.views.publish` with the payload below. No webhook or reminder logic changes needed.
+          </div>
+        </div>
+      </div>
+      <div class="view-preview">
+        <div class="view-block">
+          <strong style="color:#a5b4fc;">Section</strong>
+          <p style="margin:6px 0;color:#cbd5f5;">“Need a room? Tap an action below.”</p>
+        </div>
+        <div class="view-block">
+          <strong style="color:#a5b4fc;">Actions</strong>
+          <p style="margin:6px 0;color:#cbd5f5;">Buttons linking to `/rooms`, `bookingAppUrl`, or quick suggestions.</p>
+        </div>
+        <div class="view-block">
+          <strong style="color:#a5b4fc;">Context</strong>
+          <p style="margin:6px 0;color:#cbd5f5;">Display office hours from `_globals.OFFICE_HOURS`.</p>
+        </div>
+        <div class="view-block">
+          <strong style="color:#a5b4fc;">Divider</strong>
+          <p style="margin:6px 0;color:#cbd5f5;">Segment bookings vs. recommendations.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="workflow">
+      <article class="workflow-card">
+        <span>1</span>
+        <h4>Trigger</h4>
+        <p>Slack emits `app_home_opened`. Botkit captures it without affecting reminder schedules.</p>
+      </article>
+      <article class="workflow-card">
+        <span>2</span>
+        <h4>Hydrate</h4>
+        <p>Call the same Apps Script services (e.g., `getWeekGrid`) to pull fresh availability.</p>
+      </article>
+      <article class="workflow-card">
+        <span>3</span>
+        <h4>Render</h4>
+        <p>Map data to Block Kit layouts. Users get actionable cards while notifications stay untouched.</p>
+      </article>
+      <article class="workflow-card">
+        <span>4</span>
+        <h4>Loop</h4>
+        <p>Let users re-open the Home tab anytime. Botkit handles caching & pagination for you.</p>
+      </article>
+    </section>
+
+    <section id="code">
+      <h2 style="margin-bottom:16px;">Sample Botkit payload</h2>
+      <pre><code>const { Botkit } = require('botkit');
+const controller = new Botkit({
+  adapterConfig: { clientSigningSecret: process.env.SLACK_SECRET },
+  webhook_uri: '/slack/events'
+});
+
+controller.on('app_home_opened', async ({ body, context }) =&gt; {
+  const rooms = await fetchWeekSnapshot(); // reuse Apps Script endpoint
+
+  await controller.client.views.publish({
+    token: context.botToken,
+    user_id: body.event.user,
+    view: {
+      type: 'home',
+      blocks: [
+        {
+          type: 'section',
+          text: { type: 'mrkdwn', text: '*Room Booking Bot* · plan the day' }
+        },
+        {
+          type: 'actions',
+          elements: [
+            {
+              type: 'button',
+              text: { type: 'plain_text', text: 'Open booking UI' },
+              url: SLACK_CONFIG.bookingAppUrl
+            },
+            {
+              type: 'button',
+              text: { type: 'plain_text', text: 'View week grid' },
+              action_id: 'open_week_grid'
+            }
+          ]
+        },
+        {
+          type: 'divider'
+        },
+        ...rooms.map(room =&gt; ({
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `*${room.label}*  \nNext free slot: ${room.next}`
+          }
+        }))
+      ]
+    }
+  });
+});</code></pre>
+    </section>
+
+    <section id="docs">
+      <h2 style="margin-bottom:18px;">Implementation references</h2>
+      <div class="doc-grid">
+        <article class="doc-card">
+          <h5>Slack Adapter</h5>
+          <p>Configure tokens, secrets, and OAuth scopes for Botkit.</p>
+          <a href="https://botkit.ai/docs/v4/platforms/slack.html" target="_blank" rel="noopener">Adapter setup</a>
+        </article>
+        <article class="doc-card">
+          <h5>App Home Events</h5>
+          <p>Listen for visits and manage user state.</p>
+          <a href="https://botkit.ai/docs/v4/bots/SlackBot.html#app-home" target="_blank" rel="noopener">Home events</a>
+        </article>
+        <article class="doc-card">
+          <h5>Storage &amp; Middleware</h5>
+          <p>Persist shortcuts, default rooms, and schedule caches.</p>
+          <a href="https://botkit.ai/docs/v4/storage.html" target="_blank" rel="noopener">Storage guide</a>
+        </article>
+        <article class="doc-card">
+          <h5>Block Kit Builder</h5>
+          <p>Prototype layouts before publishing to Slack.</p>
+          <a href="https://api.slack.com/tools/block-kit-builder" target="_blank" rel="noopener">Open builder</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="cta">
+      <h3>Ready to ship the Home tab?</h3>
+      <p>Plug this layout into your Botkit controller, keep the Google Apps Script bot logic untouched, and give the team a polished Slack-native hub.</p>
+      <div class="nav-actions" style="justify-content:center;">
+        <a class="btn btn-primary" href="https://botkit.ai/docs/v4/" target="_blank" rel="noopener">Review Botkit guide</a>
+        <a class="btn btn-secondary" href="https://api.slack.com/apps" target="_blank" rel="noopener">Open Slack app</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Built for the Your Company Room Booking bot · All logic lives in <code>bot.js</code> untouched.
+  </footer>
+</body>
+</html>
+

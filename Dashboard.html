@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Room Availability - Your Company</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8FAFC;
+  --card:#FFFFFF;
+  --ink:#0F172A;
+  --muted:#64748B;
+  --line:#E2E8F0;
+  --green:#10B981;
+  --green-light:#D1FAE5;
+  --green-text:#065F46;
+  --red:#EF4444;
+  --red-light:#FEE2E2;
+  --red-text:#991B1B;
+  --current:#3B82F6;
+  --current-light:#DBEAFE;
+  --current-text:#1E40AF;
+  --shadow:0 1px 3px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--card);
+  color:var(--ink);
+  font:14px/1.4 Inter,system-ui,sans-serif;
+  padding:0;
+  margin:0;
+  overflow:hidden;
+  width:100vw;
+  height:100vh;
+  position:relative;
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 20px;
+  background:var(--card);
+  border-bottom:2px solid var(--line);
+}
+.header-left h1{
+  font-size:24px;
+  font-weight:700;
+  color:var(--ink);
+  margin-bottom:4px;
+}
+.header-left .subtitle{
+  font-size:13px;
+  color:var(--muted);
+}
+.header-right{
+  text-align:right;
+}
+.current-time{
+  font-size:32px;
+  font-weight:700;
+  color:var(--ink);
+  margin-bottom:2px;
+}
+.last-updated{
+  font-size:11px;
+  color:var(--muted);
+  font-weight:500;
+}
+
+.timeline-container{
+  position:absolute;
+  top:78px;
+  left:0;
+  right:0;
+  bottom:50px;
+  background:var(--card);
+  padding:0;
+  overflow:auto;
+}
+
+.timeline-grid{
+  display:table;
+  width:100%;
+  min-height:100%;
+  table-layout:fixed;
+  border-collapse:collapse;
+}
+
+.timeline-row{
+  display:table-row;
+}
+
+.timeline-header,
+.room-label,
+.time-slot{
+  display:table-cell;
+  border-bottom:1px solid var(--line);
+  border-right:1px solid var(--line);
+  text-align:center;
+  vertical-align:middle;
+}
+
+.timeline-header{
+  background:linear-gradient(180deg, #FAFAFA 0%, #F5F5F5 100%);
+  padding:12px 8px;
+  font-size:11px;
+  font-weight:700;
+  color:var(--ink);
+  text-align:center;
+  position:sticky;
+  top:0;
+  z-index:10;
+  border-bottom:2px solid var(--line);
+  border-right:1px solid var(--line);
+}
+
+.timeline-header:first-child{
+  text-align:left;
+  position:sticky;
+  left:0;
+  z-index:11;
+  padding-left:16px;
+  width:12%;
+}
+
+.room-label{
+  background:#FFFFFF;
+  padding:14px 16px;
+  font-size:13px;
+  font-weight:700;
+  color:var(--ink);
+  position:sticky;
+  left:0;
+  z-index:5;
+  text-align:left;
+  border-right:2px solid var(--line);
+  width:12%;
+}
+
+.room-label .capacity{
+  font-size:11px;
+  font-weight:500;
+  color:var(--muted);
+  display:block;
+  margin-top:2px;
+}
+
+.time-slot{
+  background:var(--green-light);
+  padding:18px 8px;
+  text-align:center;
+  font-size:11px;
+  font-weight:600;
+  color:var(--green-text);
+  transition:background .15s ease,color .15s ease,transform .15s ease;
+}
+
+.time-slot:hover{
+  background:#A3E0C5;
+  color:#0F172A;
+  transform:translateY(-2px);
+}
+
+.time-slot.busy{
+  background:var(--red-light);
+  color:var(--red-text);
+}
+
+.time-slot.busy:hover{
+  background:#F3BDBD;
+  color:#7F1D1D;
+}
+
+.time-slot.current{
+  box-shadow:inset 0 0 0 2px var(--current);
+}
+
+@keyframes pulse-slot {
+  0%, 100% { box-shadow: inset 0 0 0 2px var(--current); }
+  50% { box-shadow: inset 0 0 0 3px var(--current); }
+}
+
+.time-slot .meeting-title{
+  display:block;
+  font-size:9px;
+  font-weight:600;
+  margin-top:3px;
+  opacity:0.8;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.legend{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  padding:12px;
+  background:var(--card);
+  border-top:2px solid var(--line);
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  z-index:20;
+}
+
+.legend-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  font-weight:600;
+  color:var(--ink);
+}
+
+.legend-color{
+  width:18px;
+  height:18px;
+  border-radius:4px;
+  box-shadow:0 2px 4px rgba(0,0,0,0.1);
+}
+
+.legend-color.available{
+  background:var(--green-light);
+  border:2px solid var(--green);
+}
+
+.legend-color.busy{
+  background:var(--red-light);
+  border:2px solid var(--red);
+}
+
+.legend-color.current{
+  background:var(--current-light);
+  border:2px solid var(--current);
+}
+
+.loading{
+  text-align:center;
+  padding:60px 20px;
+  font-size:16px;
+  color:var(--ink);
+  background:var(--card);
+}
+
+.error{
+  background:var(--red-light);
+  color:var(--red-text);
+  padding:20px;
+  text-align:center;
+  font-weight:600;
+  border:2px solid var(--red);
+}
+</style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <h1>Room Availability Dashboard</h1>
+      <div class="subtitle">Your Office · Real-time View</div>
+    </div>
+    <div class="header-right">
+      <div class="current-time" id="currentTime">--:--</div>
+      <div class="last-updated" id="lastUpdated">Loading...</div>
+    </div>
+  </div>
+
+  <div id="content">
+    <div class="loading">Loading room availability...</div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-color available"></div>
+      <span>Available</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color busy"></div>
+      <span>Occupied</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color current"></div>
+      <span>Current Time</span>
+    </div>
+  </div>
+
+<script>
+(function(){
+  var contentEl = document.getElementById('content');
+  var lastUpdatedEl = document.getElementById('lastUpdated');
+  var currentTimeEl = document.getElementById('currentTime');
+  
+  var REFRESH_INTERVAL = 60000; // 60 seconds
+  var refreshTimer = null;
+
+  function formatTime(isoString) {
+    if (!isoString) return '';
+    return isoString.slice(11, 16);
+  }
+
+  function updateCurrentTime(dateOverride) {
+    var now = new Date();
+    if (dateOverride) {
+      now = new Date(dateOverride);
+    }
+    var hours = String(now.getHours()).padStart(2, '0');
+    var minutes = String(now.getMinutes()).padStart(2, '0');
+    currentTimeEl.textContent = hours + ':' + minutes;
+    
+    var day = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    lastUpdatedEl.textContent = day + ' • Updated';
+  }
+
+  function getTimeSlots(data) {
+    if (!data || !data.columnLabels || !data.columnLabels.length) {
+      var fallback = [];
+      for (var hour = (data && data.workStart) || 8; hour < ((data && data.workEnd) || 17); hour++) {
+        fallback.push({ time: String(hour).padStart(2, '0') + ':00', hour: hour, minute: 0 });
+        fallback.push({ time: String(hour).padStart(2, '0') + ':30', hour: hour, minute: 30 });
+      }
+      return fallback;
+    }
+    return data.columnLabels.map(function(label) {
+      var parts = label.split(':');
+      var hour = parseInt(parts[0], 10);
+      var minute = parseInt(parts[1], 10);
+      return { time: label, hour: hour, minute: minute };
+    });
+  }
+
+  function isCurrentTimeSlot(hour, minute) {
+    var now = new Date();
+    return now.getHours() === hour && Math.floor(now.getMinutes() / 30) * 30 === minute;
+  }
+
+  function isSlotBusy(room, slotTime) {
+    for (var i = 0; i < room.cells.length; i++) {
+      var cell = room.cells[i];
+      if (!cell || !cell.startISO) continue;
+      if (cell.startISO.slice(11, 16) === slotTime) {
+        return { busy: !!cell.busy, meeting: cell.peek || '' };
+      }
+    }
+    return { busy: false, meeting: '' };
+  }
+
+  function renderDashboard(data) {
+    if (!data || !data.rooms || !data.rooms.length) {
+      contentEl.innerHTML = '<div class="error">No room data available</div>';
+      return;
+    }
+    
+    updateCurrentTime();
+    var timeSlots = getTimeSlots(data);
+    
+    var html = '<div class="timeline-container"><div class="timeline-grid">';
+    
+    // Header row
+    html += '<div class="timeline-row">';
+    html += '<div class="timeline-header">Room</div>';
+    timeSlots.forEach(function(slot) {
+      html += '<div class="timeline-header">' + slot.time + '</div>';
+    });
+    html += '</div>';
+    
+    // Room rows
+    data.rooms.forEach(function(room) {
+      var label = room.label || room.room;
+      var parts = label.split(' · ');
+      var roomName = parts[0];
+      var capacity = parts[1] || '';
+      
+      html += '<div class="timeline-row">';
+      
+      // Room label
+      html += '<div class="room-label">';
+      html += '<div>' + roomName + '</div>';
+      if (capacity) {
+        html += '<span class="capacity">' + capacity + '</span>';
+      }
+      html += '</div>';
+      
+      // Time slots for this room
+      timeSlots.forEach(function(slot) {
+        var slotInfo = isSlotBusy(room, slot.time);
+        var isCurrent = isCurrentTimeSlot(slot.hour, slot.minute);
+        
+        var classes = 'time-slot';
+        if (slotInfo.busy) {
+          classes += ' busy';
+        }
+        if (isCurrent) {
+          classes += ' current';
+        }
+        
+        html += '<div class="' + classes + '" title="' + roomName + ' - ' + slot.time + '">';
+        html += slot.time;
+        if (slotInfo.meeting && slotInfo.meeting !== 'Busy') {
+          html += '<span class="meeting-title">' + slotInfo.meeting + '</span>';
+        }
+        html += '</div>';
+      });
+      
+      html += '</div>';
+    });
+    
+    html += '</div></div>';
+    contentEl.innerHTML = html;
+  }
+
+  function loadData() {
+    google.script.run
+      .withSuccessHandler(function(data) {
+        try {
+          renderDashboard(data);
+          scheduleRefresh();
+        } catch (err) {
+          console.error('Render error:', err);
+          contentEl.innerHTML = '<div class="error">Error rendering dashboard</div>';
+        }
+      })
+      .withFailureHandler(function(err) {
+        console.error('Load error:', err);
+        contentEl.innerHTML = '<div class="error">Error loading data: ' + (err.message || err) + '</div>';
+        scheduleRefresh();
+      })
+      .getDashboardData();
+  }
+
+  function scheduleRefresh() {
+    if (refreshTimer) clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(loadData, REFRESH_INTERVAL);
+  }
+
+  // Update clock every minute
+  setInterval(updateCurrentTime, 60000);
+
+  // Initial load
+  updateCurrentTime();
+  loadData();
+})();
+</script>
+</body>
+</html>

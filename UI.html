@@ -1,0 +1,1920 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Room Booking</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --card:#FFFFFF; --ink:#0B0B0C; --muted:#4B5563; --line:#E5E7EB; --grid:#EDF2F7;
+  --accent:#1D4ED8; --accent-ink:#FFFFFF; --accent-hover:#1E40AF;
+  --free:#FFFFFF;
+  --sel:#93C5FD;
+  --busyFill:#EFF6FF;
+  --radius:14px; --shadow:0 8px 24px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,Segoe UI,Roboto,Arial}
+.nav{position:sticky;top:0;z-index:5;background:#FFFFFF;border-bottom:1px solid var(--line)}
+.nav .wrap{max-width:1300px;margin:0 auto;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+.brand{font-weight:700;font-size:18px;color:#0B0B0C}
+.credit{font-size:12px;color:#6B7280}
+
+.container{max-width:1300px;margin:24px auto;padding:0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+
+.action-bar{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:20px;padding:18px 20px;border:1px solid #E2E8F0;border-radius:18px;background:#F8FAFC;}
+.title-stack{display:flex;flex-direction:column;gap:6px;min-width:0;}
+.title-stack h1{margin:0;font-size:22px;font-weight:700;color:#0B0B0C;}
+.title-stack p{margin:0;font-size:14px;color:#475569;max-width:520px;}
+.action-buttons{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end;}
+.btn-ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#FFFFFF;color:#1E293B;border:1px solid #CBD5E1;border-radius:999px;padding:10px 18px;font-weight:600;font-size:15px;line-height:1;cursor:pointer;transition:background .15s ease,transform .15s ease,box-shadow .15s ease,color .15s ease;}
+.btn-ghost:hover{background:#F1F5F9;transform:translateY(-1px);box-shadow:0 12px 24px rgba(15,23,42,0.08);}
+.btn-ghost:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none;}
+.info-panels{display:flex;gap:16px;flex-wrap:wrap}
+.panel{flex:1 1 280px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;min-width:260px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin:0 0 12px}
+.panel-head h3{margin:0;font-size:16px;font-weight:600;color:#0B0B0C}
+.link-btn{background:none;border:0;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;padding:0}
+.link-btn:hover{text-decoration:underline}
+.panel-message{font-size:13px;color:var(--muted);margin:0 0 8px}
+.aux-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.booking-item,.suggest-item{display:flex;flex-direction:column;gap:6px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#F9FAFB}
+.booking-meta,.suggest-meta{font-size:13px;color:#374151}
+.tag{display:inline-block;background:#E2E8F0;color:#1E293B;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:600}
+.inline-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn-inline{align-self:flex-start;background:#1E293B;color:var(--accent-ink);border-radius:999px;border:0;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,0.18);transition:transform .12s ease,box-shadow .12s ease,background .12s ease;}
+.btn-inline:hover{transform:translateY(-1px);box-shadow:0 16px 34px rgba(15,23,42,0.2);background:#111827;}
+.btn-inline:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-inline.danger{background:#B91C1C;box-shadow:0 10px 24px rgba(220,38,38,0.18);}
+.btn-inline.danger:hover{box-shadow:0 16px 34px rgba(220,38,38,0.24);background:#991B1B;}
+.empty-state{font-size:13px;color:var(--muted);background:#F9FAFB;border-radius:12px;padding:12px;text-align:center}
+
+.header{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:8px}
+.controls{display:flex;gap:16px;align-items:end;flex-wrap:wrap}
+.weeknav{width:100%;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:6px}
+.weeknav-left{display:flex;gap:8px;align-items:center}
+.daychips{display:flex;gap:6px;flex-wrap:wrap}
+.daychip{border:1px solid var(--line);background:#fff;color:#0B0B0C;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s ease,color .15s ease,border-color .15s ease,box-shadow .15s ease;}
+.daychip:hover{border-color:rgba(29,78,216,0.35);}
+.daychip.active{border-color:#1D4ED8;background:#1D4ED8;color:#FFFFFF;box-shadow:0 8px 22px rgba(29,78,216,0.28);}
+.daychip:focus-visible{outline:2px solid #1D4ED8;outline-offset:2px;}
+
+label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}
+input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;color:#0B0B0C;font-size:15px}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  cursor:pointer;
+  background:#1E293B;
+  color:var(--accent-ink);
+  border:0;
+  border-radius:999px;
+  padding:11px 20px;
+  font-weight:600;
+  font-size:15px;
+  line-height:1;
+  box-shadow:0 14px 30px rgba(15,23,42,0.18);
+  transition:transform .15s ease,box-shadow .15s ease,background .15s ease;
+}
+.btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 20px 40px rgba(15,23,42,0.22);
+  background:#111827;
+}
+.btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+  transform:none;
+  box-shadow:none;
+}
+.btn-secondary{
+  background:#FFFFFF;
+  color:#1E293B;
+  border:1px solid #CBD5E1;
+  box-shadow:none;
+}
+.btn-secondary:hover{
+  background:#F8FAFC;
+  transform:translateY(-1px);
+}
+.btn-danger{
+  background:#B91C1C;
+  color:#FFFFFF;
+  box-shadow:0 14px 32px rgba(220,38,38,0.22);
+}
+.btn-danger:hover{
+  box-shadow:0 20px 44px rgba(220,38,38,0.28);
+  background:#991B1B;
+}
+
+.grid-wrap{position:relative;overflow:auto;border:1px solid var(--line);border-radius:12px;padding-bottom:18px;scroll-behavior:smooth;scrollbar-gutter:stable both-edges}
+.grid-wrap::before,.grid-wrap::after{content:"";position:absolute;top:0;bottom:18px;width:24px;pointer-events:none;z-index:3;opacity:0;transition:opacity .25s ease;}
+.grid-wrap::before{left:0;background:linear-gradient(90deg, rgba(255,255,255,1), rgba(255,255,255,0));}
+.grid-wrap::after{right:0;background:linear-gradient(270deg, rgba(255,255,255,1), rgba(255,255,255,0));}
+.grid-wrap.has-left-shadow::before{opacity:1;}
+.grid-wrap.has-right-shadow::after{opacity:1;}
+
+.grid{min-width:1250px;border-collapse:separate;border-spacing:0;width:100%}
+.grid th,.grid td{border-bottom:1px solid var(--grid)}
+.grid thead th{position:sticky;top:0;background:#FFFFFF;z-index:2}
+.grid th{font-weight:700;font-size:13px;color:#0B0B0C;text-align:center;padding:10px 8px;white-space:nowrap}
+.grid .room{position:sticky;left:0;background:#FFFFFF;z-index:1;text-align:left;padding:12px 16px;font-weight:800;color:#0B0B0C;border-right:1px solid var(--grid)}
+.grid .room .room-name{display:block;font-weight:700;color:#0B0B0C;}
+.grid .room .room-name + .capacity{margin-top:8px;}
+.grid .room .capacity{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:4px 10px;
+  font-size:11px;
+  font-weight:600;
+  color:#1E293B;
+  background:rgba(15,23,42,0.08);
+  border-radius:999px;
+  letter-spacing:0.3px;
+}
+.grid .room .capacity .count{
+  font-weight:700;
+  color:#1E293B;
+  font-size:12px;
+}
+.day-boundary{
+  border-left:2px solid #CBD5E1 !important;
+}
+
+.cell{height:60px;min-width:110px;border-left:1px solid var(--grid);cursor:pointer;user-select:none;position:relative;transition:background .08s}
+.cell.free{background:var(--free)}
+.cell.busy{background:var(--free);cursor:default;box-shadow:inset 6px 0 0 var(--accent);position:relative}
+.cell.free:hover{background:#F5F7FA}
+.cell.selected{background:var(--sel)}
+.cell .peek{position:absolute;inset:auto 6px 8px 6px;font-size:12px;color:#0B0B0C;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
+
+.cell.pending{background:linear-gradient(135deg,rgba(148,163,184,0.32) 0%,rgba(148,163,184,0.16) 100%);cursor:progress;filter:saturate(1.05);}
+.cell.pending .pending-label{
+  position:absolute;
+  left:8px;
+  right:8px;
+  bottom:8px;
+  background:rgba(255,255,255,0.95);
+  border-radius:8px;
+  padding:6px 10px;
+  font-size:11px;
+  font-weight:600;
+  color:#1D4ED8;
+  text-align:center;
+  box-shadow:0 12px 28px rgba(15,23,42,0.18);
+  letter-spacing:0.3px;
+  text-transform:uppercase;
+  pointer-events:none;
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  gap:6px;
+}
+.cell.pending .pending-label::before{
+  content:'';
+  width:10px;
+  height:10px;
+  border:2px solid rgba(29,78,216,0.35);
+  border-top-color:#1D4ED8;
+  border-radius:50%;
+  animation:spin 0.8s linear infinite;
+}
+
+.cell-tooltip{position:absolute;left:8px;right:8px;bottom:8px;background:#fff;border:1px solid var(--line);padding:6px 8px;border-radius:8px;font-size:12px;color:#0B0B0C;box-shadow:0 8px 20px rgba(0,0,0,.12);pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .12s ease,transform .12s ease;white-space:nowrap;}
+.cell.busy:hover .cell-tooltip{opacity:1;transform:translateY(0);}
+
+.footer{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+.small{font-size:13px;color:var(--muted)}
+.disclaimer a{color:#1D4ED8;text-decoration:underline}
+.spinner{display:none;align-items:center;gap:8px;color:var(--muted);font-size:14px}
+.dotload{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:b 1s infinite alternate}
+.dotload:nth-child(2){animation-delay:.15s}.dotload:nth-child(3){animation-delay:.3s}
+@keyframes b{from{transform:translateY(0);opacity:.6}to{transform:translateY(-4px);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.selbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.selbar .info{font-size:14px;color:#0B0B0C;background:#FFFFFF;border:1px solid var(--line);border-radius:10px;padding:8px 10px;white-space:nowrap}
+.selbar .actions{display:flex;gap:10px}
+.handle{position:absolute;top:8px;bottom:8px;width:8px;background:#ffffffcc;border:1px solid var(--line);border-radius:5px;display:none}
+.cell.selected .handle{display:block}
+.handle.left{left:4px;cursor:w-resize}
+.handle.right{right:4px;cursor:e-resize}
+.state{font-size:13px}
+.state.ok{color:#1D4ED8}
+.state.warn{color:#1D4ED8}
+
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,0.45);display:none;align-items:center;justify-content:center;z-index:30;padding:20px}
+.modal{background:#fff;border-radius:16px;box-shadow:0 24px 60px rgba(15,23,42,0.18);max-width:520px;width:100%;max-height:90vh;overflow:auto;padding:24px;display:flex;flex-direction:column;gap:16px}
+.modal h2{margin:0;font-size:20px;font-weight:700}
+.modal-close{position:absolute;top:18px;right:18px;background:none;border:0;font-size:22px;cursor:pointer;color:#6B7280}
+.modal-section{display:flex;flex-direction:column;gap:10px}
+.modal-actions{display:flex;justify-content:flex-end;gap:12px}
+
+.toast{position:fixed;top:32px;right:32px;transform:translateY(-140%);z-index:100;background:#1E293B;color:#FFFFFF;border-radius:16px;padding:18px 24px;box-shadow:0 20px 50px rgba(15,23,42,0.28), 0 8px 20px rgba(0,0,0,0.12);display:flex;align-items:center;gap:14px;min-width:320px;max-width:420px;opacity:0;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast-icon{width:32px;height:32px;background:rgba(255,255,255,0.18);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;letter-spacing:0.6px;flex-shrink:0;}
+.toast-content{flex:1;display:flex;flex-direction:column;gap:2px;}
+.toast-title{font-size:15px;font-weight:700;line-height:1.2;}
+.toast-message{font-size:13px;opacity:0.95;margin:0;line-height:1.3;}
+.toast.error{background:#7F1D1D;box-shadow:0 20px 50px rgba(127,29,29,0.22), 0 8px 20px rgba(0,0,0,0.12);}
+.toast.warning{background:#B45309;box-shadow:0 20px 50px rgba(180,83,9,0.22), 0 8px 20px rgba(0,0,0,0.12);}
+
+@media (max-width: 640px){
+  .toast{
+    right:auto;
+    left:50%;
+    width:calc(100% - 32px);
+    max-width:none;
+    transform:translate(-50%, -140%);
+  }
+  .toast.show{
+    transform:translate(-50%, 0);
+  }
+}
+
+@media (max-width: 640px){
+  .toast{
+    right:auto;
+    left:50%;
+    width:calc(100% - 32px);
+    max-width:none;
+    transform:translate(-50%, -140%);
+  }
+  .toast.show{
+    transform:translate(-50%, 0);
+  }
+}
+
+.recommend-item{display:flex;flex-direction:column;gap:6px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#F1F5F9}
+.recommend-meta{font-size:13px;color:#374151}
+.recommend-warn{font-size:13px;color:#DC2626;font-weight:600}
+.recommend-select{margin-top:6px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px}
+.recommend-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.recommend-actions .btn-inline{flex:1 1 auto;min-width:140px;text-align:center}
+</style>
+</head>
+<body>
+  <div class="nav">
+    <div class="wrap">
+      <div class="brand">Room Booking</div>
+      <div class="credit"> Developed and Designed by Zab</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <div class="action-bar">
+        <div class="title-stack">
+          <h1>Weekly Room Planner</h1>
+          <p>Plan your meetings and book rooms for the upcoming week.</p>
+        </div>
+        <div class="action-buttons">
+          <button class="btn-ghost" id="openToday" type="button">
+            View my bookings
+          </button>
+          <button class="btn-ghost" id="openDashboard" type="button">
+            Open availability dashboard
+          </button>
+          <button class="btn-ghost" id="jumpToday" type="button">
+            Jump to today
+          </button>
+          <button class="btn" id="openSuggestions" type="button">
+            Quick suggestions
+          </button>
+          <button class="btn" id="openRecommendations" type="button">
+            Recommend rooms for my meetings
+          </button>
+        </div>
+      </div>
+
+      <div class="header">
+        <div class="controls">
+          <div>
+            <label>Week starting</label>
+            <input type="date" id="weekStart">
+          </div>
+          <div>
+            <label>Suggested duration</label>
+            <select id="duration">
+              <option value="30">30 min</option>
+              <option value="60" selected>1 h</option>
+              <option value="90">1 h 30</option>
+              <option value="120">2 h</option>
+            </select>
+          </div>
+          <div>
+            <label>Meeting title</label>
+            <input type="text" id="title" placeholder="Project sync, interview, etc.">
+          </div>
+          <div>
+            <label>Guest email (optional)</label>
+            <input type="email" id="guest" placeholder="name@company.com">
+          </div>
+          <div>
+            <label>&nbsp;</label>
+            <button class="btn" id="refresh">Refresh grid</button>
+          </div>
+        </div>
+
+        <div class="weeknav">
+          <div class="weeknav-left">
+            <button class="btn btn-secondary" id="prevWeek" title="Previous week">Previous</button>
+            <button class="btn btn-secondary" id="todayBtn"  title="Jump to today">Today</button>
+            <button class="btn btn-secondary" id="nextWeek" title="Next week">Next</button>
+          </div>
+          <div class="daychips" id="dayChips"></div>
+        </div>
+      </div>
+
+      <div class="grid-wrap" tabindex="-1">
+        <table class="grid" id="grid"></table>
+      </div>
+
+      <div class="footer">
+        <div class="spinner" id="loading"><div class="dotload"></div><div class="dotload"></div><div class="dotload"></div> Loading…</div>
+        <div class="selbar">
+          <div class="info" id="selInfo">No selection</div>
+          <div class="state" id="state"></div>
+          <div class="actions">
+            <button class="btn btn-secondary" id="clearSel" disabled>Clear</button>
+            <button class="btn" id="confirm" disabled>Book room</button>
+          </div>
+        </div>
+        <div class="small disclaimer">Need another option? Book a different floor via WeWork → <a href="https://members.wework.com/workplaceone/content2/bookings/rooms" target="_blank" rel="noopener">Open WeWork</a></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modalToday">
+    <div class="modal">
+      <button class="modal-close" data-close="modalToday">×</button>
+      <h2>My bookings today</h2>
+      <p class="panel-message" id="todayMsg">Loading…</p>
+      <ul class="aux-list" id="todayList"></ul>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" data-close="modalToday">Close</button>
+        <button class="btn" id="refreshToday">Refresh</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modalSuggestions">
+    <div class="modal">
+      <button class="modal-close" data-close="modalSuggestions">×</button>
+      <h2>Quick suggestions</h2>
+      <p class="panel-message" id="suggestMsg">Pick a suggested slot to prefill the grid.</p>
+      <ul class="aux-list" id="suggestList"></ul>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" data-close="modalSuggestions">Close</button>
+        <button class="btn" id="refreshSuggest">Refresh</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modalRecommendations">
+    <div class="modal" style="max-width:520px;">
+      <button class="modal-close" data-close="modalRecommendations">×</button>
+      <h2>Recommended rooms for my meetings</h2>
+      <p class="panel-message" id="recommendationsMsg">Load your upcoming meetings without a room.</p>
+      <ul class="aux-list" id="recommendationsList"></ul>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" data-close="modalRecommendations">Close</button>
+        <button class="btn" id="recommendRooms">Find rooms</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modalConfirm">
+    <div class="modal" style="max-width:420px;">
+      <h2 id="confirmTitle">Confirm action</h2>
+      <p class="panel-message" id="confirmMsg">Are you sure?</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="confirmCancel">Cancel</button>
+        <button class="btn btn-danger" id="confirmOk">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">
+    <div class="toast-icon">✓</div>
+    <div class="toast-content">
+      <strong class="toast-title">Booking Confirmed!</strong>
+      <p class="toast-message"></p>
+    </div>
+  </div>
+
+<script>
+(function(){
+  var gridEl = document.getElementById('grid');
+  var gridWrap = document.querySelector('.grid-wrap');
+  var weekStartEl = document.getElementById('weekStart');
+  var durationEl = document.getElementById('duration');
+  var titleEl = document.getElementById('title');
+  var guestEl = document.getElementById('guest');
+  var loadingEl = document.getElementById('loading');
+  var selInfoEl = document.getElementById('selInfo');
+  var stateEl = document.getElementById('state');
+  var clearBtn = document.getElementById('clearSel');
+  var confirmBtn = document.getElementById('confirm');
+  var refreshBtn = document.getElementById('refresh');
+  var dayChipsEl = document.getElementById('dayChips');
+  var prevWeekBtn = document.getElementById('prevWeek');
+  var nextWeekBtn = document.getElementById('nextWeek');
+  var todayBtn = document.getElementById('todayBtn');
+  var refreshTodayBtn = document.getElementById('refreshToday');
+  var refreshSuggestBtn = document.getElementById('refreshSuggest');
+  var todayListEl = document.getElementById('todayList');
+  var todayMsgEl = document.getElementById('todayMsg');
+  var suggestListEl = document.getElementById('suggestList');
+  var suggestMsgEl = document.getElementById('suggestMsg');
+  var openTodayBtn = document.getElementById('openToday');
+  var openDashboardBtn = document.getElementById('openDashboard');
+  var jumpTodayBtn = document.getElementById('jumpToday');
+  var openSuggestionsBtn = document.getElementById('openSuggestions');
+  var openRecommendationsBtn = document.getElementById('openRecommendations');
+  var recommendationsModal = document.getElementById('modalRecommendations');
+  var recommendRoomsBtn = document.getElementById('recommendRooms');
+  var modalToday = document.getElementById('modalToday');
+  var modalSuggestions = document.getElementById('modalSuggestions');
+  var modalConfirm = document.getElementById('modalConfirm');
+  var confirmTitle = document.getElementById('confirmTitle');
+  var confirmMsg = document.getElementById('confirmMsg');
+  var confirmOkBtn = document.getElementById('confirmOk');
+  var confirmCancelBtn = document.getElementById('confirmCancel');
+  var recommendationsMsgEl = document.getElementById('recommendationsMsg');
+  var recommendationsListEl = document.getElementById('recommendationsList');
+  var toastEl = document.getElementById('toast');
+  var toastTitle = toastEl.querySelector('.toast-title');
+  var toastMessage = toastEl.querySelector('.toast-message');
+  var toastIcon = toastEl.querySelector('.toast-icon');
+
+  var lastGrid = null;
+  var selectedDayIndexInWeek = null; // 0..4
+  var stickyDayIndex = null;
+  var pendingBlocks = [];
+  var PENDING_BLOCK_TTL_MS = 5 * 60 * 1000;
+  var tempPending = null;
+  var selection = { room: null, startCol: null, endCol: null, resizing: null };
+  var dragging = false;
+  var resizingActive = false;
+  var loadWeekPromise = null;
+  var toastTimeout = null;
+  var scrollShadowFrame = null;
+  var modalStack = [];
+  var dashboardUrlCache = null;
+  var slotsPerDay = null;
+  var timeFormatter = null;
+  var dateFormatter = null;
+  try {
+    timeFormatter = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' });
+    dateFormatter = new Intl.DateTimeFormat(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+  } catch (intlError) {
+    console.warn('Intl formatter unavailable, falling back to ISO slices.', intlError);
+    timeFormatter = null;
+    dateFormatter = null;
+  }
+
+  function monday(date){
+    var d = new Date(date);
+    var wd = (d.getDay() + 6) % 7;
+    d.setDate(d.getDate() - wd);
+    d.setHours(0,0,0,0);
+    return d;
+  }
+
+  function toISODate(d){
+    var pad = function(n){ return String(n).padStart(2,'0'); };
+    return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+  }
+
+  function formatDurationSlots(slotCount){
+    var minutes = slotCount * 30;
+    var hours = Math.floor(minutes / 60);
+    var mins = minutes % 60;
+    if (hours > 0 && mins > 0) return hours + 'h ' + mins + 'm';
+    if (hours > 0) return hours + 'h';
+    return minutes + 'm';
+  }
+
+  function formatDurationMinutes(totalMinutes){
+    if (totalMinutes == null || isNaN(totalMinutes)) return '';
+    var minutes = Math.max(0, Math.round(totalMinutes));
+    var hours = Math.floor(minutes / 60);
+    var mins = minutes % 60;
+    if (hours > 0 && mins > 0) return hours + 'h ' + mins + 'm';
+    if (hours > 0) return hours + 'h';
+    return mins + 'm';
+  }
+
+  function formatTimeLabel(iso){
+    if (!iso) return '';
+    try {
+      if (timeFormatter) {
+        return timeFormatter.format(new Date(iso));
+      }
+      return iso.slice(11, 16);
+    } catch (error) {
+      return iso.slice(11, 16);
+    }
+  }
+
+  function formatTimeRange(startISO, endISO){
+    return formatTimeLabel(startISO) + ' – ' + formatTimeLabel(endISO);
+  }
+
+  function formatDateLabel(iso){
+    if (!iso) return '';
+    try {
+      if (dateFormatter) {
+        return dateFormatter.format(new Date(iso));
+      }
+      return iso.slice(0, 10);
+    } catch (error) {
+      return iso.slice(0, 10);
+    }
+  }
+
+  function describeError(err){
+    if (!err) return 'Unknown error.';
+    if (typeof err === 'string') return err;
+    if (err.message) return err.message;
+    if (err.details) return err.details;
+    try {
+      return JSON.stringify(err);
+    } catch (jsonError) {
+      return String(err);
+    }
+  }
+
+  function roomShortLabel(roomKey){
+    if (!lastGrid || !Array.isArray(lastGrid.rooms)) return roomKey;
+    var match = lastGrid.rooms.find(function(entry){ return entry.room === roomKey; });
+    if (!match) return roomKey;
+    var label = match.label || roomKey;
+    if (label.indexOf(' · ') > -1) {
+      return label.split(' · ')[0];
+    }
+    return label;
+  }
+
+  function resolveDashboardUrl(onSuccess, onError){
+    if (dashboardUrlCache){
+      onSuccess(dashboardUrlCache);
+      return;
+    }
+    google.script.run
+      .withSuccessHandler(function(url){
+        if (url){
+          dashboardUrlCache = String(url).replace(/\/$/, '');
+          onSuccess(dashboardUrlCache);
+        } else {
+          onError('Dashboard URL is not configured.');
+        }
+      })
+      .withFailureHandler(function(err){
+        onError(describeError(err));
+      })
+      .getDashboardUrl();
+  }
+
+  function goToToday(){
+    var today = new Date();
+    var mon = monday(today);
+    weekStartEl.value = toISODate(mon);
+    var wd = (today.getDay() + 6) % 7;
+    selectedDayIndexInWeek = (wd >= 0 && wd < 5) ? wd : 0;
+    loadWeekPromise = null;
+    return loadWeek().then(function(){
+      if (selectedDayIndexInWeek == null) return;
+      scrollToDay(selectedDayIndexInWeek, slotsPerDay, true);
+    });
+  }
+
+  function findAlternativeRooms(range, excludeRoom){
+    if (!range || !lastGrid || !Array.isArray(lastGrid.rooms)) return [];
+    var suggestions = [];
+    lastGrid.rooms.forEach(function(room){
+      if (!room || room.room === excludeRoom) return;
+      var startIdx = room.cells.findIndex(function(cell){ return cell && cell.startISO === range.startISO; });
+      if (startIdx === -1) return;
+      var fits = true;
+      for (var offset = 0; offset < range.steps; offset++){
+        var candidate = room.cells[startIdx + offset];
+        if (!candidate || candidate.busy){
+          fits = false;
+          break;
+        }
+      }
+      if (fits){
+        suggestions.push({
+          room: room.room,
+          label: room.label || room.room,
+          startIndex: startIdx
+        });
+      }
+    });
+    return suggestions;
+  }
+
+  function showLoading(show){
+    loadingEl.style.display = show ? 'flex' : 'none';
+  }
+
+  function resetSelection(){
+    selection = { room: null, startCol: null, endCol: null, resizing: null };
+    Array.from(gridEl.querySelectorAll('.cell.selected')).forEach(function(el){ el.classList.remove('selected'); });
+    Array.from(gridEl.querySelectorAll('.handle')).forEach(function(el){ el.remove(); });
+    selInfoEl.textContent = 'No selection';
+    stateEl.textContent = '';
+    stateEl.className = 'state';
+    confirmBtn.disabled = true;
+    clearBtn.disabled = true;
+  }
+
+  function updateScrollShadows(){
+    if (!gridWrap) return;
+    var maxScrollLeft = Math.max(0, gridWrap.scrollWidth - gridWrap.clientWidth);
+    var hasOverflow = maxScrollLeft > 2;
+    var leftActive = hasOverflow && gridWrap.scrollLeft > 6;
+    var rightActive = hasOverflow && gridWrap.scrollLeft < (maxScrollLeft - 6);
+    gridWrap.classList.toggle('has-left-shadow', leftActive);
+    gridWrap.classList.toggle('has-right-shadow', rightActive);
+  }
+
+  function onGridScroll(){
+    if (scrollShadowFrame) return;
+    scrollShadowFrame = requestAnimationFrame(function(){
+      scrollShadowFrame = null;
+      updateScrollShadows();
+    });
+  }
+
+  function pruneStalePending(nowMs){
+    if (!pendingBlocks.length) return;
+    var hadChanges = false;
+    pendingBlocks = pendingBlocks.filter(function(pb){
+      if (!pb) {
+        hadChanges = true;
+        return false;
+      }
+      if (!pb.createdAt) {
+        pb.createdAt = nowMs;
+      }
+      if (nowMs - pb.createdAt > PENDING_BLOCK_TTL_MS) {
+        hadChanges = true;
+        return false;
+      }
+      return true;
+    });
+    if (hadChanges) {
+      console.log('Pruned stale pending blocks');
+    }
+  }
+
+  function cellIsFree(room, col){
+    if (!lastGrid) return false;
+    pruneStalePending(Date.now());
+    var row = lastGrid.rooms.find(function(r){ return r.room === room; });
+    var cell = row && row.cells[col];
+    if (!cell) return false;
+    var pendingHit = pendingBlocks.some(function(pb){
+      return pb.room === room && !(cell.endISO <= pb.startISO || cell.startISO >= pb.endISO);
+    });
+    return !cell.busy && !pendingHit;
+  }
+
+  function applySelection(room, startCol, endCol){
+    Array.from(gridEl.querySelectorAll('.cell.selected')).forEach(function(el){ el.classList.remove('selected'); });
+    Array.from(gridEl.querySelectorAll('.handle')).forEach(function(el){ el.remove(); });
+
+    selection.room = room;
+    selection.startCol = startCol;
+    selection.endCol = endCol;
+
+    var row = lastGrid.rooms.find(function(r){ return r.room === room; });
+    var a = Math.min(startCol, endCol);
+    var b = Math.max(startCol, endCol);
+
+    for (var i=a; i<=b; i++){
+      var cellEl = gridEl.querySelector('td.cell[data-room="' + room + '"][data-col="' + i + '"]');
+      if (cellEl) cellEl.classList.add('selected');
+    }
+
+    var leftCell = gridEl.querySelector('td.cell[data-room="' + room + '"][data-col="' + a + '"]');
+    var rightCell = gridEl.querySelector('td.cell[data-room="' + room + '"][data-col="' + b + '"]');
+
+    if (leftCell){
+      var handleLeft = document.createElement('div');
+      handleLeft.className = 'handle left';
+      handleLeft.addEventListener('mousedown', function(e){
+        selection.resizing = 'left';
+        startResizeListeners();
+        e.stopPropagation();
+        e.preventDefault();
+      });
+      leftCell.appendChild(handleLeft);
+    }
+
+    if (rightCell){
+      var handleRight = document.createElement('div');
+      handleRight.className = 'handle right';
+      handleRight.addEventListener('mousedown', function(e){
+        selection.resizing = 'right';
+        startResizeListeners();
+        e.stopPropagation();
+        e.preventDefault();
+      });
+      rightCell.appendChild(handleRight);
+    }
+
+    var startISO = row.cells[a].startISO;
+    var endISO = row.cells[b].endISO;
+    var roomLabel = roomShortLabel(row.room);
+    selInfoEl.textContent = roomLabel + ' • ' + formatTimeRange(startISO, endISO) + ' • ' + formatDurationSlots(b - a + 1);
+    stateEl.textContent = '';
+    stateEl.className = 'state';
+    confirmBtn.disabled = false;
+    clearBtn.disabled = false;
+  }
+
+  function selectionHasGaps(room, start, end){
+    var a = Math.min(start, end);
+    var b = Math.max(start, end);
+    for (var i = a; i <= b; i++){
+      if (!cellIsFree(room, i)) return true;
+    }
+    return false;
+  }
+
+  function scrollToDay(dayIndex, perDay, smooth){
+    if (!gridWrap || !lastGrid) return;
+    var slots = perDay || slotsPerDay || lastGrid.slotsPerDay || (lastGrid.dayLabels && lastGrid.dayLabels.length ? Math.round(lastGrid.columns.length / lastGrid.dayLabels.length) : lastGrid.columns.length);
+    slots = Math.max(1, Math.round(slots));
+    var totalColumns = lastGrid.columns.length;
+    var targetCol = dayIndex * slots;
+    if (targetCol >= totalColumns){
+      targetCol = Math.max(0, totalColumns - slots);
+    }
+    var firstRow = gridEl.querySelector('tbody tr');
+    if (!firstRow) return;
+    var cell = firstRow.querySelector('td.cell[data-col="' + targetCol + '"]');
+    if (!cell) return;
+    var stickyHeader = firstRow.querySelector('th.room');
+    var stickyWidth = stickyHeader ? stickyHeader.getBoundingClientRect().width : 0;
+    var targetLeft = cell.offsetLeft - stickyWidth;
+    if (!isFinite(targetLeft) || targetLeft < 0) targetLeft = 0;
+    if (typeof gridWrap.scrollTo === 'function'){
+      gridWrap.scrollTo({ left: targetLeft, behavior: smooth ? 'smooth' : 'auto' });
+    } else {
+      gridWrap.scrollLeft = targetLeft;
+    }
+    if (smooth){
+      requestAnimationFrame(updateScrollShadows);
+    } else {
+      updateScrollShadows();
+    }
+  }
+
+  function clearTempPending(){
+    if (!tempPending) return;
+    if (lastGrid && tempPending.room && tempPending.startCol != null && tempPending.endCol != null){
+      for (var i = tempPending.startCol; i <= tempPending.endCol; i++){
+        var td = gridEl.querySelector('td.cell[data-room="' + tempPending.room + '"][data-col="' + i + '"]');
+        if (td && td.classList.contains('pending')){
+          td.classList.remove('pending');
+          td.classList.add('free');
+          td.innerHTML = '';
+        }
+      }
+    }
+    tempPending = null;
+  }
+
+  function reconcilePendingWithGrid(){
+    if (!lastGrid) {
+      pendingBlocks = [];
+      return;
+    }
+
+    var nowMs = Date.now();
+    pruneStalePending(nowMs);
+
+    pendingBlocks = pendingBlocks.filter(function(pb){
+      if (!pb) return false;
+      var row = lastGrid.rooms.find(function(r){ return r.room === pb.room; });
+      if (!row) return false;
+
+      var hasOverlap = false;
+      var allBusy = true;
+
+      row.cells.forEach(function(cell){
+        if (cell.endISO <= pb.startISO || cell.startISO >= pb.endISO) return;
+        hasOverlap = true;
+        if (!cell.busy) {
+          allBusy = false;
+        }
+      });
+
+      if (!hasOverlap) {
+        return false;
+      }
+
+      if (allBusy) {
+        return false;
+      }
+
+      return true;
+    });
+  }
+
+  function renderDayChips(){
+    var perDay = slotsPerDay || (lastGrid && lastGrid.slotsPerDay) || (lastGrid && lastGrid.dayLabels && lastGrid.dayLabels.length ? Math.max(1, Math.round(lastGrid.columns.length / lastGrid.dayLabels.length)) : 1);
+    perDay = Math.max(1, Math.round(perDay));
+    dayChipsEl.innerHTML = '';
+    lastGrid.dayLabels.forEach(function(label, di){
+      var chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'daychip' + ((selectedDayIndexInWeek === di) ? ' active' : '');
+      chip.textContent = label;
+      chip.addEventListener('click', function(){
+        selectedDayIndexInWeek = di;
+        markActiveChip();
+        scrollToDay(di, perDay, true);
+      });
+      dayChipsEl.appendChild(chip);
+    });
+    function markActiveChip(){
+      Array.from(dayChipsEl.children).forEach(function(chip, idx){
+        chip.classList.toggle('active', idx === selectedDayIndexInWeek);
+      });
+    }
+    markActiveChip();
+  }
+
+  function renderSuggestions(entries){
+    if (!lastGrid) return;
+    suggestListEl.innerHTML = '';
+    if (!entries || entries.length === 0){
+      suggestMsgEl.textContent = 'No open slots found right now.';
+      return;
+    }
+    suggestMsgEl.textContent = 'Select a suggestion to prefill the grid.';
+    entries.forEach(function(item){
+      var li = document.createElement('li');
+      li.className = 'suggest-item';
+      var title = document.createElement('strong');
+      title.textContent = item.label;
+    var meta = document.createElement('div');
+    meta.className = 'suggest-meta';
+    meta.textContent = formatTimeRange(item.startISO, item.endISO) + ' • ' + formatDurationSlots(item.slots);
+      var actions = document.createElement('div');
+      actions.className = 'inline-actions';
+      var useBtn = document.createElement('button');
+      useBtn.type = 'button';
+      useBtn.className = 'btn-inline';
+      useBtn.textContent = 'Use this slot';
+      useBtn.addEventListener('click', function(){ applySuggestion(item); closeModal(modalSuggestions); focusSelection(); });
+      var peekBtn = document.createElement('button');
+      peekBtn.type = 'button';
+      peekBtn.className = 'btn-inline';
+      peekBtn.textContent = 'Show on grid';
+      peekBtn.addEventListener('click', function(){
+        applySuggestion(item);
+        scrollSelectionIntoView();
+      });
+      actions.appendChild(useBtn);
+      actions.appendChild(peekBtn);
+      li.appendChild(title);
+      li.appendChild(meta);
+      li.appendChild(actions);
+      suggestListEl.appendChild(li);
+    });
+  }
+
+  function applySuggestion(item){
+    if (!lastGrid) return;
+    var row = lastGrid.rooms.find(function(r){ return r.room === item.room; });
+    if (!row) return;
+    var startIndex = row.cells.findIndex(function(c){ return c.startISO === item.startISO; });
+    var endIndex = row.cells.findIndex(function(c){ return c.endISO === item.endISO; });
+    if (startIndex === -1 || endIndex === -1) return;
+    if (selectionHasGaps(item.room, startIndex, endIndex)) return;
+    applySelection(item.room, startIndex, endIndex);
+    var perDay = slotsPerDay || lastGrid.slotsPerDay || (lastGrid.dayLabels && lastGrid.dayLabels.length ? Math.round(lastGrid.columns.length / lastGrid.dayLabels.length) : lastGrid.columns.length);
+    perDay = Math.max(1, Math.round(perDay));
+    selectedDayIndexInWeek = Math.floor(startIndex / perDay);
+    if (lastGrid && Array.isArray(lastGrid.dayLabels) && lastGrid.dayLabels.length){
+      var maxDayIndex = lastGrid.dayLabels.length - 1;
+      if (selectedDayIndexInWeek > maxDayIndex) selectedDayIndexInWeek = maxDayIndex;
+      if (selectedDayIndexInWeek < 0) selectedDayIndexInWeek = 0;
+    }
+    scrollToDay(selectedDayIndexInWeek, perDay, true);
+  }
+
+  function focusSelection(){
+    scrollSelectionIntoView();
+    if (!gridWrap || typeof gridWrap.focus !== 'function') return;
+    try {
+      gridWrap.focus({ preventScroll: true });
+    } catch (err) {
+      gridWrap.focus();
+    }
+  }
+
+  function scrollSelectionIntoView(){
+    if (!selection.room || selection.startCol == null) return;
+    var td = gridEl.querySelector('td.cell[data-room="' + selection.room + '"][data-col="' + selection.startCol + '"]');
+    if (!td || typeof td.scrollIntoView !== 'function') return;
+    td.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+  }
+
+  function loadWeek(){
+    if (loadWeekPromise) return loadWeekPromise;
+    showLoading(true);
+    loadWeekPromise = new Promise(function(resolve){
+      google.script.run
+        .withSuccessHandler(function(data){
+          try {
+            if (validateGridPayload(data)){
+              lastGrid = data;
+              buildGrid();
+              renderSuggestions(data.suggestions || []);
+              reconfirmSelection();
+            } else {
+              lastGrid = null;
+              renderGridMessage('Nothing to display for this week.');
+              renderSuggestions([]);
+            }
+          } catch (err) {
+            console.error('Failed to render grid', err);
+            alert('We could not render the grid. Please reload or try again.');
+          }
+          showLoading(false);
+          resolve();
+        })
+        .withFailureHandler(function(err){
+          showLoading(false);
+          console.error('Failed to load booking grid:', err);
+          showToast('Failed to load grid', describeError(err), 'error');
+          resolve();
+        })
+        .getWeekGrid({ weekStartISO: weekStartEl.value });
+    }).finally(function(){ loadWeekPromise = null; });
+    return loadWeekPromise;
+  }
+
+  function validateGridPayload(data){
+    if (!data || !Array.isArray(data.rooms) || !Array.isArray(data.columns)) {
+      return false;
+    }
+    if (!Array.isArray(data.dayLabels) || data.dayLabels.length === 0) {
+      return false;
+    }
+    if (!data.rooms.length || !data.columns.length) {
+      return false;
+    }
+    if (data.slotsPerDay && data.columns.length !== data.slotsPerDay * data.dayLabels.length) {
+      console.warn('Grid dimensions mismatch', data);
+      return false;
+    }
+    return true;
+  }
+
+  function renderGridMessage(message){
+    gridEl.innerHTML = '<thead></thead><tbody><tr><td class="empty-state" colspan="2" style="padding:32px 20px;font-size:15px;">' +
+      (message || 'No data available.') + '</td></tr></tbody>';
+    dayChipsEl.innerHTML = '';
+    resetSelection();
+  }
+
+  function buildGrid(){
+    gridEl.innerHTML = '';
+    clearTempPending();
+
+    var perDay = lastGrid.slotsPerDay || (lastGrid.dayLabels && lastGrid.dayLabels.length ? Math.round(lastGrid.columns.length / lastGrid.dayLabels.length) : lastGrid.columns.length);
+    perDay = Math.max(1, Math.round(perDay));
+    slotsPerDay = perDay;
+    var totalColumns = lastGrid.columns.length;
+
+    var thead = document.createElement('thead');
+    var row1 = document.createElement('tr');
+    var roomHeader = document.createElement('th');
+    roomHeader.className = 'room';
+    roomHeader.textContent = 'Space';
+    row1.appendChild(roomHeader);
+    lastGrid.dayLabels.forEach(function(label, dayIdx){
+      var th = document.createElement('th');
+      th.colSpan = perDay;
+      th.textContent = label;
+      if (dayIdx > 0){
+        th.classList.add('day-boundary');
+      }
+      row1.appendChild(th);
+    });
+    thead.appendChild(row1);
+
+    var row2 = document.createElement('tr');
+    var spacer = document.createElement('th');
+    spacer.className = 'room';
+    spacer.textContent = '';
+    row2.appendChild(spacer);
+    lastGrid.dayLabels.forEach(function(_, dayIdx){
+      var startIdx = dayIdx * perDay;
+      var endIdx = Math.min(totalColumns, startIdx + perDay);
+      var slots = lastGrid.columns.slice(startIdx, endIdx);
+      slots.forEach(function(col, slotIdx){
+        var th = document.createElement('th');
+        th.textContent = col.label;
+        if (dayIdx > 0 && slotIdx === 0){
+          th.classList.add('day-boundary');
+        }
+        row2.appendChild(th);
+      });
+    });
+    thead.appendChild(row2);
+    gridEl.appendChild(thead);
+
+    var tbody = document.createElement('tbody');
+    lastGrid.rooms.forEach(function(room){
+      var tr = document.createElement('tr');
+      var th = document.createElement('th');
+      th.className = 'room';
+      var label = room.label || room.room;
+      if (label.indexOf(' · ') > -1) {
+        var parts = label.split(' · ');
+        var capacityRaw = parts.slice(1).join(' · ');
+        var capacityHtml = capacityRaw.replace(/(\d+)/g, function(match){
+          return '<span class="count">' + match + '</span>';
+        });
+        th.innerHTML = '<span class="room-name">' + parts[0] + '</span><span class="capacity">Capacity · ' + capacityHtml + '</span>';
+      } else {
+        th.innerHTML = '<span class="room-name">' + label + '</span>';
+      }
+      tr.appendChild(th);
+
+      room.cells.forEach(function(cell, colIndex){
+        var td = document.createElement('td');
+        
+        // Check if this cell overlaps with any pending blocks
+        var isPending = pendingBlocks.some(function(pb){
+          return pb.room === room.room && !(cell.endISO <= pb.startISO || cell.startISO >= pb.endISO);
+        });
+        
+        var isBusy = cell.busy || isPending;
+        td.className = 'cell ' + (isBusy ? 'busy' : 'free');
+        td.dataset.room = room.room;
+        td.dataset.col = colIndex;
+        var isDayBoundary = perDay > 0 && colIndex % perDay === 0 && colIndex !== 0;
+        if (isDayBoundary){
+          td.classList.add('day-boundary');
+          td.dataset.dayBoundary = '1';
+        } else {
+          delete td.dataset.dayBoundary;
+        }
+
+        if (isBusy){
+          var peek = document.createElement('div');
+          peek.className = 'peek';
+          if (isPending && !cell.busy){
+            peek.textContent = 'Booking...';
+          } else {
+            peek.textContent = cell.peek || 'Busy';
+          }
+          td.appendChild(peek);
+          if (cell.hoverUser){
+            td.setAttribute('title', cell.hoverUser);
+            var tooltip = document.createElement('div');
+            tooltip.className = 'cell-tooltip';
+            tooltip.textContent = cell.hoverUser;
+            td.appendChild(tooltip);
+          } else if (isPending){
+            var pendingBlock = pendingBlocks.find(function(pb){
+              return pb.room === room.room && !(cell.endISO <= pb.startISO || cell.startISO >= pb.endISO);
+            });
+            if (pendingBlock && pendingBlock.organizer){
+              td.setAttribute('title', pendingBlock.organizer);
+              var pendingTip = document.createElement('div');
+              pendingTip.className = 'cell-tooltip';
+              pendingTip.textContent = pendingBlock.organizer;
+              td.appendChild(pendingTip);
+            }
+          }
+        } else {
+          td.addEventListener('mousedown', onMouseDownCell);
+          td.addEventListener('click', onClickFree);
+          td.addEventListener('touchstart', onTouchStart, { passive: false });
+          td.addEventListener('touchmove', onTouchMove, { passive: false });
+        }
+
+        tr.appendChild(td);
+      });
+
+      tbody.appendChild(tr);
+    });
+    gridEl.appendChild(tbody);
+
+    var tfoot = document.createElement('tfoot');
+    var trFoot = document.createElement('tr');
+    var tdFoot = document.createElement('td');
+    tdFoot.colSpan = 1 + lastGrid.columns.length;
+    tdFoot.style.height = '12px';
+    tdFoot.style.borderBottom = '0';
+    trFoot.appendChild(tdFoot);
+    tfoot.appendChild(trFoot);
+    gridEl.appendChild(tfoot);
+
+    updateScrollShadows();
+
+    renderDayChips();
+
+    if (stickyDayIndex != null){
+      selectedDayIndexInWeek = stickyDayIndex;
+      scrollToDay(stickyDayIndex, perDay, true);
+      stickyDayIndex = null;
+    } else if (selectedDayIndexInWeek != null){
+      scrollToDay(selectedDayIndexInWeek, perDay, true);
+    }
+
+    reconcilePendingWithGrid();
+    resetSelection();
+  }
+
+  function reconfirmSelection(){
+    if (!selection.room) return;
+    var room = selection.room;
+    var start = selection.startCol;
+    var end = selection.endCol;
+    if (room == null || start == null || end == null) return;
+    if (!cellIsFree(room, start) || !cellIsFree(room, end)){
+      resetSelection();
+    } else {
+      applySelection(room, start, end);
+    }
+  }
+
+  function currentRangeISO(){
+    if (!lastGrid || selection.room == null) return null;
+    var room = lastGrid.rooms.find(function(r){ return r.room === selection.room; });
+    if (!room) return null;
+    var a = Math.min(selection.startCol, selection.endCol);
+    var b = Math.max(selection.startCol, selection.endCol);
+    return {
+      room: selection.room,
+      startISO: room.cells[a].startISO,
+      endISO: room.cells[b].endISO,
+      steps: b - a + 1,
+      startCol: a
+    };
+  }
+
+  function markRangeBusyUI(room, startCol, endCol, organizer){
+    for (var i = startCol; i <= endCol; i++){
+      var td = gridEl.querySelector('td.cell[data-room="' + room + '"][data-col="' + i + '"]');
+      if (!td) continue;
+      td.classList.remove('selected');
+      td.classList.add('busy');
+      td.classList.remove('free');
+      td.innerHTML = '';
+      var peek = document.createElement('div');
+      peek.className = 'peek';
+      peek.textContent = 'Busy';
+      td.appendChild(peek);
+      if (organizer){
+        td.setAttribute('data-user', organizer);
+      } else {
+        td.removeAttribute('data-user');
+      }
+      td.replaceWith(td.cloneNode(true));
+    }
+  }
+
+  function markRangePending(room, startCol, endCol){
+    tempPending = { room: room, startCol: startCol, endCol: endCol };
+    for (var i = startCol; i <= endCol; i++){
+      var td = gridEl.querySelector('td.cell[data-room="' + room + '"][data-col="' + i + '"]');
+      if (!td) continue;
+      td.classList.remove('selected');
+      td.classList.add('pending');
+      td.classList.remove('free');
+      td.classList.remove('busy');
+      td.innerHTML = '';
+      var pendingLabel = document.createElement('div');
+      pendingLabel.className = 'pending-label';
+      pendingLabel.textContent = 'Pending';
+      td.appendChild(pendingLabel);
+      td.replaceWith(td.cloneNode(true));
+    }
+  }
+
+  function doConfirm(){
+    var range = currentRangeISO();
+    if (!range){
+      alert('Select a time range first.');
+      return;
+    }
+
+    confirmBtn.disabled = true;
+    stateEl.textContent = 'Checking availability…';
+    stateEl.className = 'state';
+
+    var payload = {
+      room: range.room,
+      title: (titleEl.value || 'Room booking').trim(),
+      startISO: range.startISO,
+      endISO: range.endISO,
+      guestEmail: (guestEl.value || '').trim(),
+      weekStartISO: weekStartEl.value,
+      startCol: range.startCol,
+      steps: range.steps
+    };
+
+    markRangePending(range.room, Math.min(selection.startCol, selection.endCol), Math.max(selection.startCol, selection.endCol));
+
+    google.script.run
+      .withSuccessHandler(function(res){
+        if (res.conflict){
+          clearTempPending();
+          var originalRange = {
+            startISO: range.startISO,
+            endISO: range.endISO,
+            steps: range.steps
+          };
+          var otherRoomAlternatives = findAlternativeRooms(originalRange, payload.room);
+          var messageParts = [];
+          messageParts.push('Selected time is no longer free in ' + roomShortLabel(payload.room) + '.');
+          if (res.alternative){
+            messageParts.push('Moved to ' + formatTimeRange(res.alternative.startISO, res.alternative.endISO) + ' in the same room.');
+            applySelection(payload.room, res.alternative.index, res.alternative.index + payload.steps - 1);
+          } else {
+            messageParts.push('No continuous slot is available in this room for the selected window.');
+          }
+          if (otherRoomAlternatives.length){
+            var alternateNames = otherRoomAlternatives.slice(0, 3).map(function(option){
+              var label = option.label || option.room;
+              if (label.indexOf(' · ') > -1) {
+                label = label.split(' · ')[0];
+              }
+              return label;
+            });
+            var remaining = otherRoomAlternatives.length - alternateNames.length;
+            var availabilityNote = 'Also free at this time: ' + alternateNames.join(', ');
+            if (remaining > 0){
+              availabilityNote += ' +' + remaining + ' more';
+            }
+            messageParts.push(availabilityNote + '.');
+          } else {
+            messageParts.push('Consider trying another time or room.');
+          }
+          stateEl.textContent = messageParts.join(' ');
+          stateEl.className = 'state warn';
+          confirmBtn.disabled = false;
+        } else {
+          var a = Math.min(selection.startCol, selection.endCol);
+          var b = Math.max(selection.startCol, selection.endCol);
+          clearTempPending();
+          var perDay = slotsPerDay || lastGrid.slotsPerDay || (lastGrid.dayLabels && lastGrid.dayLabels.length ? Math.round(lastGrid.columns.length / lastGrid.dayLabels.length) : lastGrid.columns.length);
+          perDay = Math.max(1, Math.round(perDay));
+      stickyDayIndex = Math.floor(a / perDay);
+      if (Array.isArray(lastGrid.dayLabels) && lastGrid.dayLabels.length){
+        var maxIdx = lastGrid.dayLabels.length - 1;
+        if (stickyDayIndex > maxIdx) stickyDayIndex = maxIdx;
+        if (stickyDayIndex < 0) stickyDayIndex = 0;
+      }
+          markRangeBusyUI(selection.room, a, b, res.organizer || '');
+          pendingBlocks.push({
+            room: selection.room,
+            startISO: range.startISO,
+            endISO: range.endISO,
+            organizer: res.organizer || '',
+            createdAt: Date.now()
+          });
+          stateEl.textContent = 'Booked (' + formatDurationSlots(range.steps) + '). Syncing with calendar...';
+          stateEl.className = 'state ok';
+          
+          // Show success toast
+          var roomLabel = lastGrid.rooms.find(function(r){ return r.room === range.room; });
+          var roomName = (roomLabel && roomLabel.label) ? roomLabel.label.split(' · ')[0] : range.room;
+          var duration = formatDurationSlots(range.steps);
+          var timeRangeLabel = formatTimeRange(range.startISO, range.endISO);
+          showToast(
+            'Booking Confirmed!',
+            roomName + ' • ' + timeRangeLabel + ' (' + duration + ')',
+            'success'
+          );
+          
+          resetSelection();
+          setTimeout(loadWeek, 3500);
+        }
+      })
+      .withFailureHandler(function(err){
+        console.error('Booking request failed:', err);
+        showToast('Booking failed', describeError(err), 'error');
+        stateEl.textContent = '';
+        stateEl.className = 'state';
+        confirmBtn.disabled = false;
+        clearTempPending();
+      })
+      .bookRoom(payload);
+  }
+
+  function loadTodayBookings(){
+    todayMsgEl.textContent = 'Loading…';
+    todayListEl.innerHTML = '';
+    google.script.run
+      .withSuccessHandler(renderTodayBookings)
+      .withFailureHandler(function(err){
+        var message = describeError(err);
+        todayMsgEl.textContent = 'Couldn\u2019t load today\u2019s bookings: ' + message;
+        showToast('Today bookings unavailable', message, 'error');
+      })
+      .getTodayBookings();
+  }
+
+  function renderTodayBookings(res){
+    todayListEl.innerHTML = '';
+    var entries = (res && res.bookings) || [];
+    if (!entries.length){
+      todayMsgEl.textContent = 'No bookings today.';
+      return;
+    }
+    todayMsgEl.textContent = 'Manage your bookings for today.';
+
+    entries.forEach(function(item){
+      var li = document.createElement('li');
+      li.className = 'booking-item';
+
+      var title = document.createElement('strong');
+      title.textContent = item.summary;
+      li.appendChild(title);
+
+      var roomTag = document.createElement('span');
+      roomTag.className = 'tag';
+      roomTag.textContent = item.roomLabel;
+      li.appendChild(roomTag);
+
+      var meta = document.createElement('div');
+      meta.className = 'booking-meta';
+      meta.textContent = formatTimeRange(item.startISO, item.endISO);
+      li.appendChild(meta);
+
+      var actions = document.createElement('div');
+      actions.className = 'inline-actions';
+
+      if (item.hangoutLink){
+        var link = document.createElement('a');
+        link.href = item.hangoutLink;
+        link.textContent = 'Join video call';
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.className = 'link-btn';
+        actions.appendChild(link);
+      }
+
+      var cancelBtn = document.createElement('button');
+      cancelBtn.type = 'button';
+      cancelBtn.className = 'btn-inline danger';
+      cancelBtn.textContent = 'Cancel booking';
+      cancelBtn.addEventListener('click', function(){ cancelTodayBooking(item.id, cancelBtn); });
+      actions.appendChild(cancelBtn);
+
+      li.appendChild(actions);
+      todayListEl.appendChild(li);
+    });
+  }
+
+  function cancelTodayBooking(eventId, btn){
+    if (!eventId) return;
+    showConfirm(
+      'Cancel booking',
+      'Are you sure you want to cancel this booking? This action cannot be undone.',
+      function(){
+        btn.disabled = true;
+        google.script.run
+          .withSuccessHandler(function(){
+            showToast('Booking Cancelled', 'Your booking has been successfully cancelled.', 'success');
+            loadTodayBookings();
+            loadWeek();
+          })
+          .withFailureHandler(function(err){
+            btn.disabled = false;
+        var message = describeError(err);
+        showToast('Cancel failed', 'Unable to cancel this booking: ' + message, 'error');
+          })
+          .cancelBooking({ eventId: eventId });
+      }
+    );
+  }
+
+  function onMouseDownCell(e){
+    var td = e.currentTarget;
+    var room = td.dataset.room;
+    var col = parseInt(td.dataset.col, 10);
+    if (!cellIsFree(room, col)) return;
+    dragging = true;
+    selection.resizing = null;
+    applySelection(room, col, col);
+    document.addEventListener('mousemove', onMouseMoveDrag);
+    document.addEventListener('mouseup', onMouseUpDrag);
+    e.preventDefault();
+  }
+
+  function onMouseMoveDrag(e){
+    if (!dragging || selection.room == null) return;
+    var el = document.elementFromPoint(e.clientX, e.clientY);
+    if (!el) return;
+    var td = el.closest('.cell');
+    if (!td) return;
+    var room = td.dataset.room;
+    var col = parseInt(td.dataset.col, 10);
+    if (room !== selection.room) return;
+    if (selectionHasGaps(room, selection.startCol, col)) return;
+    applySelection(room, selection.startCol, col);
+  }
+
+  function onMouseUpDrag(){
+    dragging = false;
+    document.removeEventListener('mousemove', onMouseMoveDrag);
+    document.removeEventListener('mouseup', onMouseUpDrag);
+  }
+
+  function startResizeListeners(){
+    if (resizingActive) return;
+    resizingActive = true;
+    document.addEventListener('mousemove', onMouseMoveResize);
+    document.addEventListener('mouseup', onMouseUpResize);
+  }
+
+  function onMouseMoveResize(e){
+    if (!selection.room || !selection.resizing) return;
+    var el = document.elementFromPoint(e.clientX, e.clientY);
+    if (!el) return;
+    var td = el.closest('.cell');
+    if (!td) return;
+    var room = td.dataset.room;
+    var col = parseInt(td.dataset.col, 10);
+    if (room !== selection.room) return;
+    if (selection.resizing === 'left'){
+      var newStart = Math.min(col, selection.endCol);
+      if (!selectionHasGaps(room, newStart, selection.endCol)){
+        applySelection(room, newStart, selection.endCol);
+      }
+    } else if (selection.resizing === 'right'){
+      var newEnd = Math.max(col, selection.startCol);
+      if (!selectionHasGaps(room, selection.startCol, newEnd)){
+        applySelection(room, selection.startCol, newEnd);
+      }
+    }
+  }
+
+  function onMouseUpResize(){
+    selection.resizing = null;
+    document.removeEventListener('mousemove', onMouseMoveResize);
+    document.removeEventListener('mouseup', onMouseUpResize);
+    resizingActive = false;
+  }
+
+  function onClickFree(e){
+    var td = e.currentTarget;
+    var room = td.dataset.room;
+    var idx = parseInt(td.dataset.col, 10);
+    if (!cellIsFree(room, idx)) return;
+    var steps = Math.ceil(parseInt(durationEl.value, 10) / 30);
+    var end = idx + steps - 1;
+    while (end >= idx && !cellIsFree(room, end)) end--;
+    if (end < idx) return;
+    applySelection(room, idx, end);
+  }
+
+  function onTouchStart(e){
+    var td = e.currentTarget;
+    var room = td.dataset.room;
+    var col = parseInt(td.dataset.col, 10);
+    if (!cellIsFree(room, col)) return;
+    applySelection(room, col, col);
+    e.preventDefault();
+  }
+
+  function getCellFromTouch(touch){
+    var el = document.elementFromPoint(touch.clientX, touch.clientY);
+    return el && el.closest ? el.closest('td.cell') : null;
+  }
+
+  function onTouchMove(e){
+    if (!selection.room) return;
+    var touch = e.touches[0];
+    var td = getCellFromTouch(touch);
+    if (!td) return;
+    var room = td.dataset.room;
+    var col = parseInt(td.dataset.col, 10);
+    if (room !== selection.room) return;
+    if (selectionHasGaps(room, selection.startCol, col)) return;
+    applySelection(room, selection.startCol, col);
+    e.preventDefault();
+  }
+
+  function openModal(modal){
+    if (!modal) return;
+    var currentTop = modalStack[modalStack.length - 1];
+    if (currentTop === modal){
+      modal.style.display = 'flex';
+      modal.setAttribute('aria-hidden', 'false');
+      return;
+    }
+    if (currentTop && currentTop !== modal){
+      currentTop.style.display = 'none';
+      currentTop.setAttribute('aria-hidden', 'true');
+    }
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden', 'false');
+    modalStack = modalStack.filter(function(entry){ return entry !== modal; });
+    modalStack.push(modal);
+  }
+
+  function closeModal(modal){
+    if (!modal) return;
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden', 'true');
+    var idx = modalStack.lastIndexOf(modal);
+    if (idx !== -1){
+      modalStack.splice(idx, 1);
+      var nextTop = modalStack[modalStack.length - 1];
+      if (nextTop){
+        nextTop.style.display = 'flex';
+        nextTop.setAttribute('aria-hidden', 'false');
+      }
+    }
+  }
+
+  function showConfirm(title, message, onConfirm){
+    confirmTitle.textContent = title;
+    confirmMsg.textContent = message;
+    
+    // Remove old event listeners by cloning
+    var newOkBtn = confirmOkBtn.cloneNode(true);
+    var newCancelBtn = confirmCancelBtn.cloneNode(true);
+    confirmOkBtn.parentNode.replaceChild(newOkBtn, confirmOkBtn);
+    confirmCancelBtn.parentNode.replaceChild(newCancelBtn, confirmCancelBtn);
+    confirmOkBtn = newOkBtn;
+    confirmCancelBtn = newCancelBtn;
+    
+    confirmOkBtn.addEventListener('click', function(){
+      closeModal(modalConfirm);
+      if (onConfirm) onConfirm();
+    });
+    
+    confirmCancelBtn.addEventListener('click', function(){
+      closeModal(modalConfirm);
+    });
+    
+    openModal(modalConfirm);
+  }
+
+  function showToast(title, message, type){
+    // Clear any existing toast timeout
+    if (toastTimeout){
+      clearTimeout(toastTimeout);
+      toastEl.classList.remove('show');
+    }
+    
+    // Reset classes
+    toastEl.className = 'toast';
+    if (type === 'error') toastEl.classList.add('error');
+    if (type === 'warning') toastEl.classList.add('warning');
+    
+    // Set content
+    toastTitle.textContent = title;
+    toastMessage.textContent = message;
+    
+    // Set icon based on type
+    if (type === 'error') toastIcon.textContent = '!';
+    else if (type === 'warning') toastIcon.textContent = '!';
+    else toastIcon.textContent = 'i';
+    
+    // Show toast with animation
+    setTimeout(function(){
+      toastEl.classList.add('show');
+    }, 10);
+    
+    // Auto hide after 4 seconds
+    toastTimeout = setTimeout(function(){
+      toastEl.classList.remove('show');
+    }, 4000);
+  }
+
+  function logInteraction(actionName){
+    google.script.run
+      .withFailureHandler(function(e){ console.warn('Log failed', e); })
+      .logClientInteraction(actionName);
+  }
+
+  if (gridWrap){
+    gridWrap.addEventListener('scroll', onGridScroll);
+    requestAnimationFrame(updateScrollShadows);
+  }
+  window.addEventListener('resize', updateScrollShadows);
+
+  refreshBtn.addEventListener('click', function(){ loadWeekPromise = null; loadWeek(); });
+  clearBtn.addEventListener('click', resetSelection);
+  confirmBtn.addEventListener('click', doConfirm);
+  prevWeekBtn.addEventListener('click', function(){
+    var d = new Date(weekStartEl.value + 'T00:00:00');
+    d.setDate(d.getDate() - 7);
+    weekStartEl.value = toISODate(d);
+    selectedDayIndexInWeek = 0;
+    loadWeekPromise = null;
+    loadWeek();
+  });
+  nextWeekBtn.addEventListener('click', function(){
+    var d = new Date(weekStartEl.value + 'T00:00:00');
+    d.setDate(d.getDate() + 7);
+    weekStartEl.value = toISODate(d);
+    selectedDayIndexInWeek = 0;
+    loadWeekPromise = null;
+    loadWeek();
+  });
+  todayBtn.addEventListener('click', function(){
+    goToToday();
+  });
+  refreshTodayBtn.addEventListener('click', loadTodayBookings);
+  refreshSuggestBtn.addEventListener('click', function(){ loadWeekPromise = null; loadWeek().then(function(){ renderSuggestions((lastGrid && lastGrid.suggestions) || []); }); });
+
+  openTodayBtn.addEventListener('click', function(){
+    logInteraction('clicked "View my bookings"');
+    openModal(modalToday);
+    loadTodayBookings();
+  });
+
+  if (openDashboardBtn){
+    var DASHBOARD_URL_OVERRIDE = ''; // Set your dashboard URL here after deployment
+    var openDashboardWindow = function(url){
+      window.open(url, '_blank', 'noopener');
+      openDashboardBtn.disabled = false;
+    };
+    var openDashboardFallback = function(){
+      var target = DASHBOARD_URL_OVERRIDE || '?page=dashboard';
+      openDashboardWindow(target);
+    };
+    openDashboardBtn.addEventListener('click', function(){
+      logInteraction('clicked "Open availability dashboard"');
+      openDashboardBtn.disabled = true;
+      if (typeof google === 'undefined' || !google.script || !google.script.run){
+        openDashboardFallback();
+        return;
+      }
+      resolveDashboardUrl(function(baseUrl){
+        if (baseUrl){
+          var normalized = String(baseUrl).replace(/\/$/, '');
+          openDashboardWindow(normalized + '?page=dashboard');
+          return;
+        }
+        openDashboardFallback();
+      }, function(message){
+        showToast('Dashboard unavailable', message, 'error');
+        openDashboardFallback();
+      });
+    });
+  }
+
+  if (jumpTodayBtn){
+    jumpTodayBtn.addEventListener('click', function(){
+      logInteraction('clicked "Jump to today"');
+      goToToday();
+    });
+  }
+
+  openSuggestionsBtn.addEventListener('click', function(){
+    logInteraction('clicked "Quick suggestions"');
+    openModal(modalSuggestions);
+    loadWeek().then(function(){
+      renderSuggestions((lastGrid && lastGrid.suggestions) || []);
+    });
+  });
+
+  if (openRecommendationsBtn) {
+    openRecommendationsBtn.addEventListener('click', function() {
+      logInteraction('clicked "Recommend rooms"');
+      var modal = document.getElementById('modalRecommendations');
+      if (!modal) return;
+      openModal(modal);
+      handleRecommendationsFetch();
+    });
+  }
+
+  if (recommendRoomsBtn) {
+    recommendRoomsBtn.addEventListener('click', function(){
+      handleRecommendationsFetch(true);
+    });
+  }
+
+  function handleRecommendationsFetch(forceRefresh) {
+    if (!recommendationsMsgEl || !recommendationsListEl) return;
+    if (!forceRefresh && recommendationsListEl.children.length) return;
+    recommendationsMsgEl.textContent = 'Loading your meetings without assigned rooms...';
+    recommendationsListEl.innerHTML = '';
+    recommendRoomsBtn && (recommendRoomsBtn.disabled = true);
+    google.script.run
+      .withSuccessHandler(function(res){
+        recommendRoomsBtn && (recommendRoomsBtn.disabled = false);
+        renderMeetingRecommendations(res);
+      })
+      .withFailureHandler(function(err){
+        recommendRoomsBtn && (recommendRoomsBtn.disabled = false);
+        var message = describeError(err);
+        recommendationsMsgEl.textContent = 'Couldn\u2019t load recommendations: ' + message;
+        showToast('Recommendations unavailable', message, 'error');
+      })
+      .getRoomSuggestionsForUpcomingEvents(5);
+  }
+
+  function renderMeetingRecommendations(res) {
+    if (!recommendationsMsgEl || !recommendationsListEl) return;
+    recommendationsListEl.innerHTML = '';
+    var entries = (res && res.suggestions) || [];
+    if (!entries.length) {
+      recommendationsMsgEl.textContent = 'No upcoming meetings without room, or no rooms available.';
+      return;
+    }
+    recommendationsMsgEl.textContent = 'Select a recommended room to prefill the grid:';
+    entries.forEach(function(entry) {
+      var li = document.createElement('li');
+      li.className = 'recommend-item';
+      var header = document.createElement('div');
+      header.style.display = 'flex';
+      header.style.flexDirection = 'column';
+      header.style.gap = '4px';
+      var title = document.createElement('strong');
+      title.textContent = entry.eventTitle;
+      header.appendChild(title);
+      var meta = document.createElement('div');
+      meta.className = 'recommend-meta';
+      var eventDateLabel = formatDateLabel(entry.eventStartISO);
+      var eventTimeRange = formatTimeRange(entry.eventStartISO, entry.eventEndISO);
+      var durationLabel = formatDurationMinutes(entry.durationMin);
+      meta.textContent = eventDateLabel + ' • ' + eventTimeRange + (durationLabel ? ' • ' + durationLabel : '');
+      header.appendChild(meta);
+      li.appendChild(header);
+      if (!entry.rooms || !entry.rooms.length) {
+        var warn = document.createElement('div');
+        warn.className = 'recommend-warn';
+        warn.textContent = 'No rooms available';
+        li.appendChild(warn);
+      } else {
+        var select = document.createElement('select');
+        select.className = 'recommend-select';
+        var initial = document.createElement('option');
+        initial.value = '';
+        initial.textContent = '-- Choose room --';
+        select.appendChild(initial);
+        entry.rooms.forEach(function(roomOption) {
+          var option = document.createElement('option');
+          option.value = roomOption.room;
+          option.textContent = roomOption.roomLabel;
+          select.appendChild(option);
+        });
+        li.appendChild(select);
+
+        var actions = document.createElement('div');
+        actions.className = 'recommend-actions';
+
+        var prefillBtn = document.createElement('button');
+        prefillBtn.type = 'button';
+        prefillBtn.className = 'btn-inline';
+        prefillBtn.textContent = 'Prefill grid';
+        prefillBtn.disabled = true;
+        actions.appendChild(prefillBtn);
+
+        var bookBtn = document.createElement('button');
+        bookBtn.type = 'button';
+        bookBtn.className = 'btn-inline';
+        bookBtn.textContent = 'Book room';
+        bookBtn.disabled = true;
+        actions.appendChild(bookBtn);
+
+        select.addEventListener('change', function(){
+          var value = select.value;
+          prefillBtn.disabled = !value;
+          bookBtn.disabled = !value;
+        });
+
+        prefillBtn.addEventListener('click', function(){
+          if (!select.value) return;
+          applyRecommendation(entry, select.value);
+        });
+
+        bookBtn.addEventListener('click', function(){
+          if (!select.value || bookBtn.disabled) return;
+          bookRecommendation(entry, select.value, bookBtn, prefillBtn, select);
+        });
+
+        li.appendChild(actions);
+      }
+      recommendationsListEl.appendChild(li);
+    });
+  }
+
+  function applyRecommendation(entry, roomKey) {
+    if (!lastGrid) return;
+    var eventStartDate = new Date(entry.eventStartISO);
+    if (isNaN(eventStartDate.getTime())) return;
+    var targetRoom = lastGrid.rooms.find(function(r){ return r.room === roomKey; });
+    var eventMonday = toISODate(monday(eventStartDate));
+    var highlightSelection = function(){
+      var refreshedRoom = lastGrid.rooms.find(function(r){ return r.room === roomKey; });
+      if (!refreshedRoom) {
+        alert('Suggested room is not available in the current grid.');
+        return;
+      }
+      var startIndex = refreshedRoom.cells.findIndex(function(cell){ return cell.startISO === entry.eventStartISO; });
+      var endIndex = refreshedRoom.cells.findIndex(function(cell){ return cell.endISO === entry.eventEndISO; });
+      if (startIndex === -1 || endIndex === -1) {
+        alert('Suggested time is outside the current grid. Try changing the displayed week.');
+        return;
+      }
+      applySelection(roomKey, startIndex, endIndex);
+      titleEl.value = entry.eventTitle;
+      closeModal(document.getElementById('modalRecommendations'));
+      scrollSelectionIntoView();
+    };
+
+    if (weekStartEl.value !== eventMonday) {
+      weekStartEl.value = eventMonday;
+      loadWeek().then(highlightSelection);
+    } else {
+      highlightSelection();
+    }
+  }
+
+  function bookRecommendation(entry, roomKey, button, prefillButton, selectEl) {
+    button.disabled = true;
+    button.textContent = 'Booking...';
+    prefillButton && (prefillButton.disabled = true);
+    selectEl && (selectEl.disabled = true);
+
+    google.script.run
+      .withSuccessHandler(function(res){
+        button.textContent = 'Book room';
+        selectEl && (selectEl.disabled = false);
+        if (res.conflict) {
+          button.disabled = false;
+          prefillButton && (prefillButton.disabled = false);
+          showToast('Room unavailable', res.reason || 'Someone else booked it first.', 'warning');
+          return;
+        }
+
+        if (res.alreadyAssigned) {
+          button.disabled = true;
+          prefillButton && (prefillButton.disabled = false);
+        showToast('Room already added', 'This meeting already includes the selected room.', 'warning');
+        return;
+        }
+
+        button.disabled = true;
+        prefillButton && (prefillButton.disabled = true);
+        var selectedText = '';
+        if (selectEl && selectEl.options && selectEl.selectedIndex >= 0) {
+          selectedText = selectEl.options[selectEl.selectedIndex].textContent || '';
+        }
+        showToast('Room assigned!', (selectedText ? selectedText.split(' · ')[0] : roomKey) + ' • ' + entry.eventTitle, 'success');
+        loadWeekPromise = null;
+        loadWeek();
+        closeModal(document.getElementById('modalRecommendations'));
+      })
+      .withFailureHandler(function(err){
+        button.textContent = 'Book room';
+        button.disabled = false;
+        prefillButton && (prefillButton.disabled = false);
+        selectEl && (selectEl.disabled = false);
+        var message = describeError(err);
+        showToast('Room assignment failed', message, 'error');
+      })
+      .assignRoomToExistingEvent({ eventId: entry.eventId, room: roomKey });
+  }
+
+  document.querySelectorAll('[data-close]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var target = btn.getAttribute('data-close');
+      if (target) closeModal(document.getElementById(target));
+    });
+  });
+
+  // Close modals when clicking backdrop
+  document.querySelectorAll('.modal-backdrop').forEach(function(backdrop){
+    backdrop.addEventListener('click', function(e){
+      if (e.target === backdrop){
+        closeModal(backdrop);
+      }
+    });
+  });
+
+  weekStartEl.value = toISODate(monday(new Date()));
+  loadWeek();
+})();
+</script>
+</body>
+</html>
