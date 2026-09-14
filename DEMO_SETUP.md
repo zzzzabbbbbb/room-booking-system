@@ -15,9 +15,16 @@ Checklist en orden. Sigue los pasos de arriba hacia abajo.
 - Solo Google Calendar (Parte A): **~20–30 min**
 - Con Slack (Parte A + B): **~50–70 min**
 
-> **Cuenta de Gmail personal (no Workspace):** funciona, pero tiene dos puntos de
-> atención específicos. El [Paso 0](#-paso-0--prueba-bloqueante-2-minutos-hazla-hoy)
-> y la [cuota de triggers en B7](#-b7-crear-los-triggers-de-recordatorios).
+> ### Demo con Gmail personal ≠ despliegue en casa del cliente
+>
+> | | Calendarios de sala | Estado |
+> |---|---|---|
+> | **Demo** (Gmail personal) | Calendarios secundarios `@group.calendar.google.com` | Hay que verificar el [Paso 0](#-paso-0--prueba-bloqueante-2-minutos-hazla-hoy) |
+> | **Producción** (Workspace del cliente) | Recursos de sala reales `@resource.calendar.google.com`, desde Admin → Edificios y recursos | Funciona tal cual, sin cambios |
+>
+> El código es el mismo en los dos casos: solo cambias los IDs en `ROOM_CALENDARS`.
+> Con Gmail personal hay además una [cuota de triggers](#-b7-crear-los-triggers-de-recordatorios)
+> más baja.
 
 > **¿Solo quieres enseñar la demo sin Slack?**
 > Haz la **Parte A completa** y salta la **Parte B entera**. Nada más.
@@ -45,27 +52,47 @@ solo pinta el bloque si el evento efectivamente aterriza en el calendario de la 
 - Con **calendarios secundarios de Gmail personal** (`@group.calendar.google.com`):
   **hay que comprobarlo.**
 
-### La prueba
+> **Nota buena:** el grid **no exige que la sala acepte** la invitación.
+> `Calendar.Events.list` (`App.js:162`) trae todo lo que esté en el calendario de la
+> sala, y el único chequeo de `declined` (`App.js:204`) solo sirve para elegir el
+> nombre del organizador. Basta con que el evento **aterrice** ahí, aunque quede en
+> `needsAction`.
+
+### La prueba rápida (manual, sin instalar nada)
 
 1. En [calendar.google.com](https://calendar.google.com), crea un calendario:
    **Otros calendarios → `+` → Crear calendario nuevo** → nómbralo `Demo · Room A`
 2. Entra a su **Configuración → Integrar calendario** y copia el **ID de calendario**
-3. Vuelve al calendario, crea un **evento normal en tu calendario principal**
+3. Crea un **evento normal en tu calendario principal**
 4. En **Invitados**, pega el ID que copiaste (`c_xxxx@group.calendar.google.com`) y guarda
 5. Mira si el evento **aparece dibujado en el calendario `Demo · Room A`**
 
 | Resultado | Qué significa |
 |---|---|
-| ✅ El evento aparece en `Demo · Room A` | Todo bien. Sigue con A1. |
-| ❌ No aparece | La demo **no va a pintar reservas**. Ve a [§ Si la prueba falla](#si-la-prueba-falla). |
+| ✅ Aparece en `Demo · Room A` | Todo bien. Sigue con A1. |
+| ❌ No aparece | Ve a [§ Si la prueba falla](#si-la-prueba-falla). |
+
+### La prueba definitiva (desde Apps Script)
+
+Cuando ya hayas hecho A1–A6, corre el diagnóstico incluido en el repo. Ejercita
+**exactamente** el mismo camino que la app y te lo dice sin ambigüedad:
+
+1. Copia `Diagnostic.js` al proyecto de Apps Script (archivo `.gs`, nómbralo `Diagnostic`)
+2. En el selector de funciones elige **`diagnoseRoomCalendars`** → **Ejecutar**
+3. Lee el registro de ejecución
+
+Comprueba dos cosas: que los 3 Calendar IDs se pueden leer (detecta erratas al
+pegarlos), y que al reservar como lo hace la app, la sala sí recibe el evento.
+Crea un evento de prueba y **lo borra solo**.
+
+> `Diagnostic.js` es solo para la demo. **Bórralo antes del despliegue real.**
 
 ### Si la prueba falla
 
-No sigas con el resto del setup todavía — avísame y ajustamos. La opción más
-limpia es un cambio pequeño en `App.js` para crear el evento **directamente en el
-calendario de la sala** en vez de invitarla. Es un cambio de lógica (afecta también
-"Mis reservas de hoy" y cancelar, que leen de `'primary'`), así que **no lo hice sin
-tu visto bueno**.
+No sigas con el resto del setup — avísame y ajustamos. La opción más limpia es un
+cambio pequeño en `App.js` para crear el evento **directamente en el calendario de
+la sala** en vez de invitarla. Es un cambio de lógica (afecta también "Mis reservas
+de hoy" y cancelar, que leen de `'primary'`), así que **no lo hice sin tu visto bueno**.
 
 ---
 
@@ -128,6 +155,10 @@ Guarda los tres en un bloc de notas antes de seguir.
 | `UI.html` | Archivo HTML | `.html` | `UI` |
 | `Dashboard.html` | Archivo HTML | `.html` | `Dashboard` |
 | `bot-home.html` | Archivo HTML | `.html` | `bot-home` |
+| `Diagnostic.js` | ⚪ Archivo de script | `.gs` | `Diagnostic` |
+
+> `Diagnostic.js` es opcional y **solo para la demo** — verifica el Paso 0 desde
+> Apps Script. Bórralo antes del despliegue real en casa del cliente.
 
 > ⚠️ **Los nombres `UI` y `Dashboard` son obligatorios y sensibles a mayúsculas.**
 > El código los carga por nombre (`createTemplateFromFile('UI')`). Si los
