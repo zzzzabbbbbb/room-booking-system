@@ -11,12 +11,61 @@ Checklist en orden. Sigue los pasos de arriba hacia abajo.
 
 **Tiempo estimado**
 
+- [Paso 0](#-paso-0--prueba-bloqueante-2-minutos-hazla-hoy) (prueba bloqueante): **2 min** — hazla hoy
 - Solo Google Calendar (Parte A): **~20–30 min**
 - Con Slack (Parte A + B): **~50–70 min**
+
+> **Cuenta de Gmail personal (no Workspace):** funciona, pero tiene dos puntos de
+> atención específicos. El [Paso 0](#-paso-0--prueba-bloqueante-2-minutos-hazla-hoy)
+> y la [cuota de triggers en B7](#-b7-crear-los-triggers-de-recordatorios).
 
 > **¿Solo quieres enseñar la demo sin Slack?**
 > Haz la **Parte A completa** y salta la **Parte B entera**. Nada más.
 > Detalle de qué se pierde: [§ Demo sin Slack](#demo-sin-slack).
+
+---
+
+## ⛔ Paso 0 — Prueba bloqueante (2 minutos, hazla HOY)
+
+**Si usas Gmail personal, haz esto antes que nada.** No requiere desplegar nada.
+
+Al reservar, la app **no crea el evento en el calendario de la sala**. Hace esto
+(`App.js:400`):
+
+```javascript
+var userCalendar = CalendarApp.getDefaultCalendar();  // TU calendario
+var attendees = [calendarId];                         // la sala, como INVITADO
+userCalendar.createEvent(summary, start, end, { guests: attendees.join(',') });
+```
+
+Crea el evento en **tu** calendario e **invita** al calendario de la sala. El grid
+solo pinta el bloque si el evento efectivamente aterriza en el calendario de la sala.
+
+- Con **recursos de sala de Google Workspace**: aceptan solos, está diseñado así ✅
+- Con **calendarios secundarios de Gmail personal** (`@group.calendar.google.com`):
+  **hay que comprobarlo.**
+
+### La prueba
+
+1. En [calendar.google.com](https://calendar.google.com), crea un calendario:
+   **Otros calendarios → `+` → Crear calendario nuevo** → nómbralo `Demo · Room A`
+2. Entra a su **Configuración → Integrar calendario** y copia el **ID de calendario**
+3. Vuelve al calendario, crea un **evento normal en tu calendario principal**
+4. En **Invitados**, pega el ID que copiaste (`c_xxxx@group.calendar.google.com`) y guarda
+5. Mira si el evento **aparece dibujado en el calendario `Demo · Room A`**
+
+| Resultado | Qué significa |
+|---|---|
+| ✅ El evento aparece en `Demo · Room A` | Todo bien. Sigue con A1. |
+| ❌ No aparece | La demo **no va a pintar reservas**. Ve a [§ Si la prueba falla](#si-la-prueba-falla). |
+
+### Si la prueba falla
+
+No sigas con el resto del setup todavía — avísame y ajustamos. La opción más
+limpia es un cambio pequeño en `App.js` para crear el evento **directamente en el
+calendario de la sala** en vez de invitarla. Es un cambio de lógica (afecta también
+"Mis reservas de hoy" y cancelar, que leen de `'primary'`), así que **no lo hice sin
+tu visto bueno**.
 
 ---
 
@@ -38,9 +87,13 @@ Crea tres, uno por sala:
 > Usa calendarios **nuevos y vacíos**. No uses tu calendario personal ni
 > calendarios con eventos reales — la demo los muestra en pantalla.
 
-**Si tienes Google Workspace** puedes usar *recursos de sala* reales en vez de
-calendarios normales (Admin console → Edificios y recursos). Funciona igual;
-el ID solo cambia de dominio (`@resource.calendar.google.com`).
+**Con Gmail personal** estos calendarios secundarios son tu única opción, y su ID
+termina en `@group.calendar.google.com`. Asegúrate de haber pasado el
+[Paso 0](#-paso-0--prueba-bloqueante-2-minutos-hazla-hoy) antes de crear los tres.
+
+**Con Google Workspace** puedes usar *recursos de sala* reales (Admin console →
+Edificios y recursos). Es la opción más robusta: aceptan las invitaciones
+automáticamente. El ID termina en `@resource.calendar.google.com`.
 
 ---
 
@@ -139,7 +192,7 @@ Guarda (`Ctrl/Cmd + S`).
 
 ---
 
-### ✅ A7. Desplegar el Web App con acceso público
+### ✅ A7. Desplegar el Web App
 
 1. Arriba a la derecha → **Implementar → Nueva implementación**
 2. Icono de engrane ⚙️ → tipo **Aplicación web**
@@ -149,26 +202,48 @@ Guarda (`Ctrl/Cmd + S`).
 |---|---|
 | Descripción | `Demo v1` |
 | **Ejecutar como** | **Yo** (`tu-correo@...`) |
-| **Quién tiene acceso** | **Cualquier usuario** |
+| **Quién tiene acceso** | **Solo yo** ← si vas a compartir pantalla |
 
-> **"Ejecutar como: Yo" es lo que hace que la demo funcione.** La app lee los
-> calendarios con *tus* permisos, así que quien vea la demo no necesita tener
-> acceso a los calendarios ni iniciar sesión.
+> ### ⚠️ Elige bien el acceso: cambia lo que ve tu prospecto
 >
-> Si tu organización bloquea **"Cualquier usuario"**, usa
-> *"Cualquier usuario de \<tu-dominio\>"* — pero entonces quien vea la demo
-> tendrá que estar en tu dominio. Verifícalo **antes** de la reunión.
+> `getActiveUserEmail()` (`App.js:856`) usa `Session.getActiveUser()`. Con acceso
+> **"Cualquier usuario"**, Apps Script **no identifica a un visitante anónimo** y eso
+> devuelve vacío.
+>
+> | Cómo enseñas la demo | Acceso | Qué pasa |
+> |---|---|---|
+> | **Compartes pantalla** (recomendado) | **Solo yo** | Estás logueado → funciona al 100% |
+> | Le mandas el link al prospecto | Cualquier usuario | "Mis reservas de hoy" **siempre vacío** (`App.js:760` corta si no hay correo), reservas sin organizador, y los eventos caen en **tu** calendario |
+>
+> **Para una primera demo, comparte pantalla y usa "Solo yo".** Te ahorras además
+> la pantalla de "app no verificada" y cualquier bloqueo de acceso público.
 
-4. **Implementar** → Google te pedirá autorizar los permisos → acepta
-   (pantalla "no verificada" → *Configuración avanzada* → *Ir a Room Booking Demo*)
+4. **Implementar** → Google te pedirá autorizar los permisos → **Revisar permisos**
+   → elige tu cuenta → **Permitir**
+   - Si sale **"Google no ha verificado esta aplicación"**: es normal, es tu propio
+     script. **Configuración avanzada** → **Ir a Room Booking Demo (no seguro)**
 5. **Copia la URL del Web App.** Termina en `/exec`:
    ```
    https://script.google.com/macros/s/AKfycb.../exec
    ```
 
+> **`/exec` vs `/dev`:** en el editor también verás una URL que termina en `/dev`
+> (siempre refleja el último código, solo para ti). **Usa `/exec` para la demo.**
+>
+> **Redesplegar:** si cambias el código después, `/exec` **sigue mostrando lo viejo**.
+> Tienes que ir a **Implementar → Gestionar implementaciones → ✏️ →
+> Versión: Nueva versión → Implementar.** Esto tumba a todo el mundo la primera vez.
+
 ---
 
-### ✅ A8. Guardar la URL en Script Properties
+### ⚪ A8. Guardar la URL en Script Properties — **solo si vas a usar Slack**
+
+**Si no vas a usar Slack, salta este paso.** La app resuelve su propia URL sola:
+`getDashboardUrl()` (`App.js:991`) usa `ScriptApp.getService().getUrl()`, así que el
+botón "Ver dashboard" funciona sin configurar nada.
+
+`WEB_APP_URL` la lee únicamente `bot.js`, para armar los enlaces de los mensajes de
+Slack. Si harás la Parte B:
 
 **Configuración del proyecto (⚙️) → Propiedades del script → Añadir propiedad:**
 
@@ -176,7 +251,8 @@ Guarda (`Ctrl/Cmd + S`).
 |---|---|
 | `WEB_APP_URL` | la URL `/exec` del paso A7 |
 
-Esto alimenta los botones "Abrir planner" y "Ver dashboard".
+> No hace falta redesplegar tras añadirla: las Script Properties se leen en tiempo
+> de ejecución. Solo los **cambios de código** requieren nueva versión.
 
 ---
 
@@ -209,9 +285,23 @@ Un grid completamente vacío se ve roto aunque esté funcionando bien.
 
 ### ⚪ B1. Crear el workspace de Slack de prueba
 
+**El plan gratuito de Slack cubre todo lo que usa esta demo.** No necesitas pagar.
+La app solo llama a 4 métodos, todos disponibles en el plan gratis:
+`chat.postMessage`, `conversations.open`, `users.lookupByEmail` y `views.publish`.
+El límite de 90 días de historial es irrelevante para una demo.
+
 1. [slack.com/get-started#/createnew](https://slack.com/get-started#/createnew)
 2. Crea un workspace nuevo, p. ej. `room-booking-demo`
 3. Crea un canal `#room-bookings`
+
+> ### 🔑 Regístrate en Slack con el MISMO Gmail que usas en Google Calendar
+>
+> El bot relaciona persona ↔ Slack por correo, con `users.lookupByEmail`
+> (`bot.js:216`). Si el correo de tu cuenta de Slack es el mismo que el de tu
+> cuenta de Google, **todo se resuelve solo** y te puedes saltar el paso B5.
+>
+> Si usas correos distintos, ningún recordatorio te va a llegar y vas a tener que
+> mapearlos a mano.
 
 > Usa un workspace **nuevo y desechable**, no el de tu empresa ni el de un
 > cliente. La demo manda DMs y mensajes de prueba.
@@ -299,6 +389,21 @@ Crea los 4 triggers de golpe (y borra duplicados previos):
 
 Verifica en **Activadores (⏰)** que aparezcan los 4.
 
+> ### ⚠️ Gmail personal: crea los triggers poco antes de la demo, y bórralos después
+>
+> Una cuenta Gmail gratuita tiene **90 minutos/día** de tiempo de ejecución de
+> triggers (Workspace tiene 6 horas). Estos 4 triggers corriendo cada minuto son
+> ~5,760 ejecuciones al día: **te pasas de la cuota**, Google los empieza a fallar
+> y te manda correos de error.
+>
+> Para la demo:
+> 1. Corre `setupReminderTriggers` **una hora antes** de la reunión
+> 2. Al terminar, ve a **Activadores (⏰)** y **bórralos** (`⋮` → Eliminar)
+>
+> No bajes la frecuencia a 5 minutos: `notifyRecentRoomBookings` es el que hace que
+> el aviso aparezca en Slack segundos después de reservar en vivo, y es de los
+> mejores momentos de la demo.
+
 > ⚠️ Los recordatorios solo se disparan **en días hábiles, entre 06:00 y 17:00**
 > (`OFFICE_HOURS` en `bot.js`). Fuera de ese rango no verás nada y **no es un
 > error**. Si vas a ensayar la demo de noche, ajusta `OFFICE_HOURS` temporalmente.
@@ -355,7 +460,7 @@ llegó ningún recordatorio.
 
 | Propiedad | ¿Obligatoria? | Ejemplo |
 |---|---|---|
-| `WEB_APP_URL` | ✅ Sí | `https://script.google.com/macros/s/AKfycb.../exec` |
+| `WEB_APP_URL` | ⚪ Solo con Slack | `https://script.google.com/macros/s/AKfycb.../exec` |
 | `SLACK_BOT_TOKEN` | ⚪ Solo con Slack | `xoxb-...` |
 | `SLACK_DEFAULT_CHANNEL` | ⚪ Solo con Slack | `C01234ABCDE` |
 | `SLACK_ADMIN_ID` | ⚪ Solo con Slack | `U01234ABCDE` |
@@ -363,9 +468,40 @@ llegó ningún recordatorio.
 
 ---
 
+## Guion sugerido de la demo
+
+Un orden que enseña **todo** sin tiempos muertos. Comparte pantalla, logueado con
+tu cuenta de Google, con Slack abierto en otra ventana.
+
+| # | Qué haces | Qué se ve |
+|---|---|---|
+| 1 | Abres la URL `/exec` | Grid semanal con las 3 salas y los eventos sembrados |
+| 2 | Arrastras sobre un hueco libre → **Book room** | La reserva se pinta al instante |
+| 3 | Cambias a la ventana de Slack | En ~60s entra el aviso de reserva nueva en `#room-bookings` |
+| 4 | Abres `?page=dashboard` | Dashboard de disponibilidad en vivo |
+| 5 | Vuelves al planner | "Mis reservas de hoy" y "Salas recomendadas" |
+| 6 | Home tab del bot en Slack | El panel de Block Kit |
+
+### Truco: no esperes a las 8:00 AM para el resumen diario
+
+En el editor, selecciona la función **`debugSendDailyDigestToMe`** → **Ejecutar**.
+Manda el resumen diario a tu DM **en el momento**, sin depender del trigger.
+
+Igual con `testSlackIntegration` si necesitas reprobar la conexión en vivo.
+
+### Antes de empezar
+
+- Cierra las pestañas del editor de Apps Script (se ve a medio construir)
+- Ten la URL `/exec` ya abierta en una pestaña limpia
+- Verifica que estás dentro del horario 06:00–17:00 entre semana, o los
+  recordatorios de Slack no se van a disparar
+
+---
+
 ## Checklist final (antes de enseñarla)
 
-- [ ] La URL `/exec` abre el grid **en una ventana de incógnito**
+- [ ] **Paso 0 pasado**: al invitar el calendario de sala, el evento sí aparece en él
+- [ ] La URL `/exec` abre el grid estando logueado con tu cuenta
 - [ ] Se ven las 3 salas con sus nombres correctos
 - [ ] Puedes reservar arrastrando y el evento aparece en Google Calendar
 - [ ] `?page=dashboard` carga bien
@@ -382,7 +518,7 @@ llegó ningún recordatorio.
 | Grid vacío / no cargan salas | Calendar API no activada | Paso **A4** |
 | `File not found: UI` | Archivo HTML mal nombrado | Paso **A3** — debe ser `UI`, no `ui` ni `UI.html` |
 | Las salas salen pero sin eventos | Calendar IDs mal pegados | Paso **A6** — revisa comillas y que no falte nada |
-| Quien ve la demo recibe "necesitas permiso" | Deploy con acceso restringido | Paso **A7** — *Cualquier usuario* + *Ejecutar como: Yo* |
+| Quien ve la demo recibe "necesitas permiso" | Le mandaste el link con acceso *Solo yo* | Comparte pantalla (recomendado), o redespliega con *Cualquier usuario* — ver aviso en **A7** |
 | Las horas no cuadran | Zona horaria del proyecto | Paso **A5** |
 | Cambié el código y no se refleja | Falta redesplegar | **Implementar → Gestionar → ✏️ → Versión: Nueva → Implementar** |
 | Slack no manda nada | Token o canal mal | Pasos **B3/B4** — y que el bot esté invitado al canal |
