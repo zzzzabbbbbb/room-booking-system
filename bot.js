@@ -2183,7 +2183,7 @@ function updateSlackAppHome(userId) {
         type: 'header',
         text: {
           type: 'plain_text',
-          text: 'Your Company · Room Booking Command Center',
+          text: 'Room Booking Demo · Command Center',
           emoji: true
         }
       },
@@ -2232,7 +2232,7 @@ function updateSlackAppHome(userId) {
           },
           {
             type: 'mrkdwn',
-            text: '*🧭 Overflow options*\nRoute to WeWork rooms when HQ is full.'
+            text: '*🧭 Overflow options*\nRoute to the overflow provider when the office is full.'
           }
         ]
       },
@@ -2279,7 +2279,7 @@ function updateSlackAppHome(userId) {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: '*How it works*\n• Choose *Open planner* to reserve a room in seconds.\n• We\'ll DM reminders before meetings start and end.\n• Need visibility? Tap *View dashboard* for the live grid.\n• If HQ is packed, jump to WeWork overflow rooms.'
+          text: '*How it works*\n• Choose *Open planner* to reserve a room in seconds.\n• We\'ll DM reminders before meetings start and end.\n• Need visibility? Tap *View dashboard* for the live grid.\n• If the office is packed, jump to the overflow rooms.'
         }
       },
       {

@@ -2,6 +2,9 @@
 
 A simple room booking system for Google Calendar with Slack notifications.
 
+> **Setting up a demo?** Follow [DEMO_SETUP.md](DEMO_SETUP.md) instead — it is an
+> ordered checklist that marks which steps are optional (Slack is entirely optional).
+
 ## Features
 
 - 📅 Weekly calendar grid view
@@ -39,14 +42,16 @@ Edit `App.js` - Replace placeholder IDs with your actual room calendar IDs:
 
 ```javascript
 const ROOM_CALENDARS = {
-  A: 'c_xxxxx@resource.calendar.google.com',
-  B: 'c_yyyyy@resource.calendar.google.com'
+  A: 'PASTE_ROOM_A_CALENDAR_ID_HERE',
+  B: 'PASTE_ROOM_B_CALENDAR_ID_HERE',
+  C: 'PASTE_ROOM_C_CALENDAR_ID_HERE'
   // Add your rooms
 };
 
 const ROOM_LABELS = {
-  A: 'Conference Room A · 4 people',
-  B: 'Conference Room B · 8 people'
+  A: 'Room A · 4 people',
+  B: 'Room B · 6 people',
+  C: 'Room C · 10 people'
   // Match your rooms
 };
 ```

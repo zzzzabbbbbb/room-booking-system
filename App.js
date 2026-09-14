@@ -6,34 +6,53 @@
  * - Room calendars must be shared with the executing user/service account
  */
 
-//////////////////////
-// Configuration
-//////////////////////
+// =====================================================================
+// ===                    DEMO CONFIGURATION                         ===
+// ===              👇 THIS IS THE ONLY BLOCK YOU EDIT 👆             ===
+// =====================================================================
+//
+// STEP 1 — Create 3 test calendars in Google Calendar (one per room).
+// STEP 2 — Open each calendar's Settings → "Integrate calendar" and copy
+//          its "Calendar ID".
+// STEP 3 — Paste each ID below, replacing the PASTE_..._HERE placeholder.
+//          Keep the quotes. Nothing else in this file needs to change.
+//
+// A test calendar ID usually looks like one of these:
+//   c_a1b2c3d4e5f6@group.calendar.google.com      ← calendar you created
+//   c_1883...@resource.calendar.google.com        ← Workspace room resource
+//
+// Full walkthrough: see DEMO_SETUP.md
+// ---------------------------------------------------------------------
 
-// Replace these with your actual room calendar IDs
 const ROOM_CALENDARS = {
-  A:   'YOUR_ROOM_A_CALENDAR_ID@resource.calendar.google.com',
-  B:   'YOUR_ROOM_B_CALENDAR_ID@resource.calendar.google.com',
-  C:   'YOUR_ROOM_C_CALENDAR_ID@resource.calendar.google.com'
-  // Add more rooms as needed
+  A:   'PASTE_ROOM_A_CALENDAR_ID_HERE',   // → shows as "Room A" in the grid
+  B:   'PASTE_ROOM_B_CALENDAR_ID_HERE',   // → shows as "Room B" in the grid
+  C:   'PASTE_ROOM_C_CALENDAR_ID_HERE'    // → shows as "Room C" in the grid
+  // Add more rooms as needed — add a matching entry to ROOM_LABELS below.
 };
 
+// Display names shown in the UI. Keys MUST match ROOM_CALENDARS above.
 const ROOM_LABELS = {
   A:   'Room A · 4 people',
   B:   'Room B · 6 people',
   C:   'Room C · 10 people'
-  // Match the keys from ROOM_CALENDARS above
 };
+
+// --- Optional: grid hours shown in the demo (defaults are fine) -------
+const WORK_START = 6;   // 06:00 local
+const WORK_END = 17;    // 17:00 local
+const SLOT_MIN = 30;    // minutes per grid cell
+const WEEK_DAYS = 5;    // Monday–Friday
+
+// =====================================================================
+// ===                  END OF DEMO CONFIGURATION                    ===
+// ===        Everything below is app logic — no need to touch.      ===
+// =====================================================================
 
 const CALENDAR_ID_TO_ROOM = Object.keys(ROOM_CALENDARS).reduce(function(map, key) {
   map[ROOM_CALENDARS[key]] = key;
   return map;
 }, {});
-
-const WORK_START = 6;   // 06:00 local
-const WORK_END = 17;    // 17:00 local
-const SLOT_MIN = 30;    // minutes per grid cell
-const WEEK_DAYS = 5;    // Monday–Friday
 
 const EVENT_SUGGESTION_LOOKAHEAD_DAYS = 7; // How many days ahead to check for personal events
 const EVENT_SUGGESTION_MIN_DURATION_MIN = 15; // Ignore very short events
@@ -1028,12 +1047,12 @@ function doGet(e) {
   if (page === 'dashboard') {
     return HtmlService.createTemplateFromFile('Dashboard')
       .evaluate()
-      .setTitle('Room Availability - Your Company')
+      .setTitle('Room Availability · Room Booking Demo')
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   }
   
   return HtmlService.createTemplateFromFile('UI')
     .evaluate()
-    .setTitle('Your Company Room Booking')
+    .setTitle('Room Booking Demo')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
