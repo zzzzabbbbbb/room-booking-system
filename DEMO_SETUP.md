@@ -331,14 +331,12 @@ El límite de 90 días de historial es irrelevante para una demo.
 > para `testSlackIntegration`. Aun así conviene crearlo: es donde compruebas que
 > el token quedó bien.
 
-> ### 🔑 Regístrate en Slack con el MISMO Gmail que usas en Google Calendar
+> ### 🔑 El mapeo de correo → Slack es obligatorio
 >
-> El bot relaciona persona ↔ Slack por correo, con `users.lookupByEmail`
-> (`bot.js:216`). Si el correo de tu cuenta de Slack es el mismo que el de tu
-> cuenta de Google, **todo se resuelve solo** y te puedes saltar el paso B5.
->
-> Si usas correos distintos, ningún recordatorio te va a llegar y vas a tener que
-> mapearlos a mano.
+> El bot no descubre a nadie solo: `isNotifiableEmail` (`bot.js:111`) solo considera
+> notificable a quien esté listado en `SLACK_USER_OVERRIDES_JSON`, y sin eso no se
+> manda ningún DM. Lo configuras en el [paso B5](#-b5-mapear-tu-correo--tu-usuario-de-slack-obligatorio-si-usas-slack),
+> y aplica aunque uses el mismo correo en Google y en Slack.
 
 > Usa un workspace **nuevo y desechable**, no el de tu empresa ni el de un
 > cliente. La demo manda DMs y mensajes de prueba.
@@ -379,6 +377,7 @@ El límite de 90 días de historial es irrelevante para una demo.
 | `SLACK_BOT_TOKEN` | `xoxb-...` | Paso B3 |
 | `SLACK_DEFAULT_CHANNEL` | `C01234ABCDE` | Slack → canal → `⌄` → abajo del todo, **Channel ID** |
 | `SLACK_ADMIN_ID` | `U01234ABCDE` | Slack → tu perfil → `⋮` → **Copiar ID de miembro** |
+| `SLACK_USER_OVERRIDES_JSON` | `{"tu-correo@gmail.com":"U01234ABCDE"}` | Ver **B5** — sin esto no sale ningún DM |
 
 > 🔒 **Nunca escribas el token dentro de los archivos `.js`.** Va solo en
 > Script Properties. El `.gitignore` del repo ya bloquea archivos con
@@ -386,18 +385,34 @@ El límite de 90 días de historial es irrelevante para una demo.
 
 ---
 
-### ⚪ B5. Mapear correos → usuarios de Slack
+### ✅ B5. Mapear tu correo → tu usuario de Slack (obligatorio si usas Slack)
 
-El bot resuelve el usuario por correo con `users.lookupByEmail`. **Si usas el
-mismo correo en Google y en Slack de prueba, esto funciona solo y puedes
-saltarte este paso.**
+**Sin esta propiedad no se envía ni un solo DM, y no verás ningún error.**
 
-Si los correos no coinciden (muy común en un workspace desechable), añade
-una propiedad más:
+La cadena es: `getEventParticipantsToNotify` → `addParticipant` →
+`if (!isNotifiableEmail(trimmed)) return false` (`bot.js:475`). Y
+`isNotifiableEmail` (`bot.js:111`) devuelve `true` **solo** si el correo aparece en
+`SLACK_USER_OVERRIDES`, que se arma a partir de esta propiedad —
+`DEFAULT_SLACK_USER_OVERRIDES` viene vacío a propósito.
+
+Es decir: aunque el correo de Google y el de Slack sean idénticos, la lista de
+participantes sale vacía y `users.lookupByEmail` nunca llega a ejecutarse. El filtro
+corta antes.
+
+Añade la propiedad con tu correo de **Google** y tu ID de **Slack**:
 
 | Propiedad | Valor |
 |---|---|
 | `SLACK_USER_OVERRIDES_JSON` | `{"tu-correo@gmail.com":"U01234ABCDE"}` |
+
+Para varias personas, sepáralas con coma:
+
+```json
+{"ana@gmail.com":"U01234ABCDE","luis@gmail.com":"U05678FGHIJ"}
+```
+
+> ⚠️ Es JSON. Si le falta una comilla o una llave, `bot.js:105` se lo traga en un
+> `catch` y te quedas sin DMs, otra vez en silencio. Pégalo con cuidado.
 
 ---
 
@@ -501,7 +516,7 @@ llegó ningún recordatorio.
 | `SLACK_BOT_TOKEN` | ⚪ Solo con Slack | `xoxb-...` |
 | `SLACK_DEFAULT_CHANNEL` | ⚪ Solo con Slack | `C01234ABCDE` |
 | `SLACK_ADMIN_ID` | ⚪ Solo con Slack | `U01234ABCDE` |
-| `SLACK_USER_OVERRIDES_JSON` | ⚪ Solo si los correos no coinciden | `{"a@b.com":"U0123"}` |
+| `SLACK_USER_OVERRIDES_JSON` | ⚪ Solo con Slack — pero **imprescindible** si lo usas | `{"a@b.com":"U0123"}` |
 
 ---
 
