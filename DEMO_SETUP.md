@@ -325,6 +325,12 @@ El límite de 90 días de historial es irrelevante para una demo.
 2. Crea un workspace nuevo, p. ej. `room-booking-demo`
 3. Crea un canal `#room-bookings`
 
+> Los avisos de reserva y los recordatorios llegan por **DM** a la persona
+> involucrada, no al canal. El canal solo se usa como respaldo cuando el DM no se
+> puede entregar (`bot.js:964`), para los reportes de sala usada sin reservar, y
+> para `testSlackIntegration`. Aun así conviene crearlo: es donde compruebas que
+> el token quedó bien.
+
 > ### 🔑 Regístrate en Slack con el MISMO Gmail que usas en Google Calendar
 >
 > El bot relaciona persona ↔ Slack por correo, con `users.lookupByEmail`
@@ -508,7 +514,7 @@ tu cuenta de Google, con Slack abierto en otra ventana.
 |---|---|---|
 | 1 | Abres la URL `/exec` | Grid semanal con las 3 salas y los eventos sembrados |
 | 2 | Arrastras sobre un hueco libre → **Book room** | La reserva se pinta al instante |
-| 3 | Cambias a la ventana de Slack | En ~60s entra el aviso de reserva nueva en `#room-bookings` |
+| 3 | Cambias a la ventana de Slack | En ~60s entra el **DM** de confirmación de la reserva |
 | 4 | Abres `?page=dashboard` | Dashboard de disponibilidad en vivo |
 | 5 | Vuelves al planner | "Mis reservas de hoy" y "Salas recomendadas" |
 | 6 | Home tab del bot en Slack | El panel de Block Kit |

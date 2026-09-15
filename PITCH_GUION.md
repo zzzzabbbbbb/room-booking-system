@@ -16,7 +16,7 @@ Material **interno**, para ti. Lo que el prospecto ve es el video y el deck.
       dispara la sección de salas recomendadas (`App.js:611`). **Sin esto no puedes
       grabar la mejor parte.**
 - [ ] Deja un hueco libre visible donde vas a reservar en vivo.
-- [ ] Ten Slack abierto en otra ventana, en `#room-bookings`.
+- [ ] Ten Slack abierto en otra ventana, en **tu DM con el bot** (ahí llegan los avisos).
 - [ ] Corre `setupReminderTriggers` una hora antes (ver cuota en DEMO_SETUP.md § B7).
 
 **Higiene de pantalla:**
@@ -113,14 +113,27 @@ busca que se entienda.
 
 Muestra, en este orden:
 
-1. **El aviso de la reserva que acabas de hacer** (llega en ~1 min por `notifyRecentRoomBookings`)
+1. **El DM de confirmación de la reserva que acabas de hacer** (llega en ~1 min por `notifyRecentRoomBookings`)
 2. **El Home tab del bot** — el panel con accesos rápidos
 3. Si tienes un DM de recordatorio, muéstralo
 
-> "Cuando alguien aparta una sala, el canal se entera. Cinco minutos antes de que
-> empiece tu junta te llega un recordatorio por mensaje directo, y otro cinco minutos
-> antes de que termine para que liberes la sala a tiempo. Y en las mañanas, un resumen
-> del día."
+> "Todo llega por mensaje directo, no a un canal que la gente silencia. Cuando apartas
+> una sala te llega la confirmación. Cinco minutos antes de que empiece tu junta, un
+> recordatorio. Y otro cinco minutos antes de que termine, para que liberes la sala a
+> tiempo. En las mañanas, un resumen del día."
+
+### La toma que cierra la venta
+
+Después de lo anterior, agenda una junta **desde Google Calendar** (no desde la app)
+e invita una sala como invitado.
+
+> "Y ojo con esto: no agendé desde la app, agendé desde mi calendario de siempre.
+> Aun así aparece en el planner y dispara el mismo aviso. El sistema se acopla a como
+> ya trabajan; nadie tiene que cambiar de herramienta."
+
+Es el argumento más fuerte que tienes: en la práctica la gente no entra a la app,
+agenda desde el calendario. `notifyRecentRoomBookings` (`bot.js:1106`) escanea los
+calendarios de las salas directamente, así que le da igual de dónde vino la reserva.
 
 > ⚠️ Los recordatorios son de **5 minutos** antes de empezar y **5 minutos** antes de
 > terminar (`bot.js:38-39`). El README viejo dice 15 y 10 — está desactualizado. No
