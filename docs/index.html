@@ -18,6 +18,7 @@
     --accent:#1D4ED8;
     --accent-hover:#1E40AF;
     --accent-ink:#FFFFFF;
+    --accent-wash:#EAF0FE;
     --img-outline:oklch(0 0 0 / 0.1);
     --shadow-border:
       0px 0px 0px 1px oklch(0 0 0 / 0.06),
@@ -54,6 +55,8 @@
       --accent:#7AA0F7;
       --accent-hover:#9CBAFA;
       --accent-ink:#08090B;
+    --accent-wash:#16203A;
+      --accent-wash:#16203A;
       --img-outline:oklch(1 0 0 / 0.1);
       --shadow-border:0 0 0 1px oklch(1 0 0 / 0.08);
       --shadow-border-hover:0 0 0 1px oklch(1 0 0 / 0.13);
@@ -177,6 +180,59 @@
   .btn-ghost:hover{color:var(--accent);box-shadow:var(--shadow-border-hover)}
   a:focus-visible,.btn:focus-visible{
     outline:2px solid var(--accent);outline-offset:3px;border-radius:9px;
+  }
+
+  /* ---- mark ---- */
+  .mark{display:flex;align-items:center;gap:0.55rem}
+  .mark svg{display:block;flex:none}
+  .mark .cellon{fill:var(--accent)}
+  .mark .celloff{fill:var(--rule-strong)}
+
+  /* ---- live planner in the hero ---- */
+  .planner{
+    margin-block-start:clamp(2.5rem,5vw,3.75rem);
+    border-radius:12px;background:var(--surface);
+    padding:1.05rem 1.15rem 1.3rem;
+    box-shadow:var(--shadow-border),var(--shadow-lift);
+    overflow-x:auto;
+  }
+  .planner-head{
+    display:flex;align-items:baseline;justify-content:space-between;
+    gap:1rem;flex-wrap:wrap;margin-block-end:0.95rem;
+  }
+  .planner-title{font-size:var(--text-caption);font-weight:700;letter-spacing:-0.005em}
+  .legend{
+    display:flex;gap:0.95rem;flex-wrap:wrap;
+    font-size:var(--text-label);color:var(--faint);letter-spacing:0.02em;
+  }
+  .legend span{display:inline-flex;align-items:center;gap:0.4rem}
+  .key{width:9px;height:9px;border-radius:2px;display:inline-block}
+  .key.free{box-shadow:inset 0 0 0 1px var(--rule-strong)}
+  .key.busy{background:var(--accent-wash);box-shadow:inset 0 0 0 1px var(--accent)}
+  .key.yours{background:var(--accent)}
+  .pgrid{
+    display:grid;grid-template-columns:4.75rem repeat(12,minmax(24px,1fr));
+    gap:3px;min-width:440px;
+  }
+  .ptime{
+    font-size:var(--text-label);color:var(--faint);text-align:center;
+    font-variant-numeric:tabular-nums;padding-block-end:3px;
+  }
+  .proom{
+    font-size:var(--text-label);font-weight:700;color:var(--muted);
+    display:flex;align-items:center;white-space:nowrap;
+  }
+  .cell{height:23px;border-radius:3px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--rule)}
+  .cell.busy{background:var(--accent-wash);box-shadow:inset 0 0 0 1px var(--accent)}
+  .cell.demo{animation:book 6.4s cubic-bezier(0.2,0,0,1) infinite}
+  @keyframes book{
+    0%,16%   {background:var(--surface);box-shadow:inset 0 0 0 1px var(--rule)}
+    25%,33%  {background:var(--accent-wash);box-shadow:inset 0 0 0 2px var(--accent)}
+    42%,90%  {background:var(--accent);box-shadow:none}
+    100%     {background:var(--surface);box-shadow:inset 0 0 0 1px var(--rule)}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .cell.demo{animation:none;background:var(--accent);box-shadow:none}
   }
 
   /* ---- hero ---- */
@@ -324,7 +380,20 @@
 
 <header class="nav">
   <div class="wrap">
-    <span class="brand">Room&nbsp;Booking</span>
+    <span class="brand mark">
+      <svg viewBox="0 0 18 18" width="17" height="17" aria-hidden="true">
+        <rect class="celloff" x="0" y="0" width="5" height="5" rx="1.3"/>
+        <rect class="celloff" x="6.5" y="0" width="5" height="5" rx="1.3"/>
+        <rect class="celloff" x="13" y="0" width="5" height="5" rx="1.3"/>
+        <rect class="celloff" x="0" y="6.5" width="5" height="5" rx="1.3"/>
+        <rect class="cellon"  x="6.5" y="6.5" width="5" height="5" rx="1.3"/>
+        <rect class="cellon"  x="13" y="6.5" width="5" height="5" rx="1.3"/>
+        <rect class="celloff" x="0" y="13" width="5" height="5" rx="1.3"/>
+        <rect class="celloff" x="6.5" y="13" width="5" height="5" rx="1.3"/>
+        <rect class="celloff" x="13" y="13" width="5" height="5" rx="1.3"/>
+      </svg>
+      Room&nbsp;Booking
+    </span>
     <a class="btn btn-primary" href="#contact">Book a walkthrough</a>
   </div>
 </header>
@@ -336,19 +405,77 @@
       <h1>Stop hunting for a free meeting room.</h1>
       <p class="lead">
         A weekly planner that runs on the Google Calendars your team already uses.
-        See what's free, book it by dragging, and get a Slack DM before your meeting starts.
+        See what's free, book it by dragging, and get a Slack DM before it starts.
       </p>
       <div class="cta">
         <a class="btn btn-primary" href="#contact">Book a walkthrough</a>
         <a class="btn btn-ghost" href="#booking">See how it works</a>
       </div>
 
-      <figure class="shot shot-wide" data-file="screenshots/grid.mp4">
-        <video src="screenshots/grid.mp4" autoplay muted loop playsinline
-               aria-label="Weekly planner scrolling across three meeting rooms, Monday to Friday."
-               onerror="this.closest('.shot').classList.add('missing')"></video>
-        <figcaption>Every room, all week, in one continuous view.</figcaption>
-      </figure>
+      <div class="planner" aria-hidden="true">
+        <div class="planner-head">
+          <span class="planner-title">This week</span>
+          <span class="legend">
+            <span><i class="key free"></i> Free</span>
+            <span><i class="key busy"></i> Taken</span>
+            <span><i class="key yours"></i> Just booked</span>
+          </span>
+        </div>
+        <div class="pgrid">
+          <span></span>
+          <span class="ptime">09:00</span>
+          <span class="ptime"></span>
+          <span class="ptime">10:00</span>
+          <span class="ptime"></span>
+          <span class="ptime">11:00</span>
+          <span class="ptime"></span>
+          <span class="ptime">12:00</span>
+          <span class="ptime"></span>
+          <span class="ptime">13:00</span>
+          <span class="ptime"></span>
+          <span class="ptime">14:00</span>
+          <span class="ptime"></span>
+      <span class="proom">Room A</span>
+      <span class="cell busy"></span>
+      <span class="cell busy"></span>
+      <span class="cell"></span>
+      <span class="cell"></span>
+      <span class="cell"></span>
+      <span class="cell"></span>
+      <span class="cell busy"></span>
+      <span class="cell busy"></span>
+      <span class="cell busy"></span>
+      <span class="cell"></span>
+      <span class="cell"></span>
+      <span class="cell"></span>
+      <span class="proom">Room B</span>
+      <span class="cell"></span>
+      <span class="cell"></span>
+      <span class="cell busy"></span>
+      <span class="cell busy"></span>
+      <span class="cell"></span>
+      <span class="cell demo" style="animation-delay:0ms"></span>
+      <span class="cell demo" style="animation-delay:110ms"></span>
+      <span class="cell"></span>
+      <span class="cell"></span>
+      <span class="cell"></span>
+      <span class="cell busy"></span>
+      <span class="cell busy"></span>
+      <span class="proom">Room C</span>
+      <span class="cell busy"></span>
+      <span class="cell"></span>
+      <span class="cell"></span>
+      <span class="cell"></span>
+      <span class="cell busy"></span>
+      <span class="cell busy"></span>
+      <span class="cell"></span>
+      <span class="cell"></span>
+      <span class="cell"></span>
+      <span class="cell busy"></span>
+      <span class="cell"></span>
+      <span class="cell"></span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -386,6 +513,14 @@
 
   <section id="booking">
     <div class="wrap row">
+      <figure class="shot" data-file="screenshots/grid.mp4">
+        <video src="screenshots/grid.mp4" autoplay muted loop playsinline
+               aria-label="The planner scrolling across the week for three meeting rooms."
+               onerror="this.closest('.shot').classList.add('missing')"></video>
+        <figcaption>Every room, all week, in one continuous view.</figcaption>
+      </figure>
+    </div>
+    <div class="wrap row" style="margin-block-start:clamp(2.5rem,5vw,4rem)">
       <p class="rail">Booking</p>
       <div>
         <h2>Drag across the slot you want. That's it.</h2>
@@ -474,14 +609,6 @@
           room goes back into circulation instead of sitting empty with the door closed.
         </p>
       </div>
-    </div>
-    <div class="wrap row">
-      <figure class="shot shot-wide" data-file="screenshots/mybookings.mp4">
-        <video src="screenshots/mybookings.mp4" autoplay muted loop playsinline
-               aria-label="Today's bookings listed under the planner, and cancelling one."
-               onerror="this.closest('.shot').classList.add('missing')"></video>
-        <figcaption>Today's bookings, and giving one back.</figcaption>
-      </figure>
     </div>
   </section>
 
@@ -661,8 +788,7 @@
           If it isn't useful, it comes back out and nothing stays installed.
         </p>
         <div class="cta">
-          <!-- Replace with your own email address -->
-          <a class="btn btn-primary" href="mailto:?subject=Room%20Booking%20walkthrough">Book a walkthrough</a>
+          <a class="btn btn-primary" href="mailto:isaacvazquezquiroz@gmail.com?subject=Room%20Booking%20walkthrough">Book a walkthrough</a>
         </div>
       </div>
     </div>
