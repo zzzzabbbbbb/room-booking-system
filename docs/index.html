@@ -303,6 +303,28 @@
     .list .idx{text-align:start;padding-block-start:0}
   }
 
+  /* ---- spec: the dense one ---- */
+  .spec{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    gap:2rem 2.5rem;margin-block-start:2.75rem;
+  }
+  .spec > div{min-width:0}
+  .spec h3{
+    font-size:var(--text-label);font-weight:700;
+    letter-spacing:0.11em;text-transform:uppercase;color:var(--accent);
+    padding-block-end:0.7rem;margin-block-end:0.85rem;
+    border-block-end:1px solid var(--rule-strong);
+  }
+  .spec ul{list-style:none;margin:0;padding:0}
+  .spec li{
+    font-size:var(--text-caption);line-height:1.45;color:var(--muted);
+    padding-block:0.38rem;
+  }
+  .spec li + li{border-block-start:1px solid var(--rule)}
+  .spec li b{color:var(--ink);font-weight:700}
+  @media (max-width:900px){ .spec{grid-template-columns:repeat(2,1fr);gap:2.25rem} }
+  @media (max-width:520px){ .spec{grid-template-columns:1fr} }
+
   /* ---- band ---- */
   .band{
     background:var(--raised);
@@ -435,6 +457,9 @@
       <p class="lead">
         Every room's week in one view, running on the Google Calendars your team already
         uses. Drag to book — and it's a real calendar event the moment you let go.
+      </p>
+      <p class="lead" style="margin-block-start:0.9rem;color:var(--ink)">
+        Nothing to buy, nothing to install. <b style="font-weight:700">Live in your office in a weekend.</b>
       </p>
       <div class="cta">
         <a class="btn btn-primary" href="#contact">Book a walkthrough</a>
@@ -626,20 +651,79 @@
     </section>
   </div>
 
+
+  <section>
+    <div class="wrap row">
+      <p class="rail">Everything it does</p>
+      <div>
+        <h2>The whole of it, on one page.</h2>
+        <p class="prose" style="margin-block-start:1.25rem">
+          No modules, no tiers, no upsell. This is the product.
+        </p>
+        <div class="spec">
+          <div>
+            <h3>Planner</h3>
+            <ul>
+              <li>Every room, all week</li>
+              <li>Drag to book</li>
+              <li><b>Blocks appear instantly</b>, sync behind</li>
+              <li>Conflicts offer the next free window</li>
+              <li><b>And name the other rooms free then</b></li>
+              <li>Every open gap, on request</li>
+              <li>Capacity shown per room</li>
+              <li>External guests by email</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Rooms that find you</h3>
+            <ul>
+              <li>Scans your next seven days</li>
+              <li>Finds meetings with no room</li>
+              <li>Matches each to what's free</li>
+              <li>Assigns with one click</li>
+              <li>No rescheduling, no new invite</li>
+              <li>Today's bookings in one list</li>
+              <li>Cancel and the room frees at once</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Slack</h3>
+            <ul>
+              <li>Confirmation on booking</li>
+              <li>Five minutes before it starts</li>
+              <li>Five minutes before it ends</li>
+              <li>A digest each morning at 08:00</li>
+              <li>Direct message, never a channel</li>
+              <li><b>Silent outside office hours</b></li>
+              <li>Entirely optional</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Runs on</h3>
+            <ul>
+              <li>Your Google Workspace</li>
+              <li>Your existing room calendars</li>
+              <li>Books and cancels both ways</li>
+              <li>Syncs to phone and Outlook</li>
+              <li><b>Hours, rooms and capacities configurable</b></li>
+              <li>No servers, no database, no bill</li>
+              <li><b>Live in a weekend</b></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section>
     <div class="wrap row">
       <p class="rail">After booking</p>
       <div>
         <h2>Your day, and one click to give a room back.</h2>
         <p class="prose" style="margin-block-start:1.25rem">
-          Today's bookings sit under the planner: what you reserved, which room, what time.
-          Cancel from there and the room is free for everyone immediately — no hunting through
-          a calendar for the event you made this morning.
-        </p>
-        <p class="prose">
-          And when a meeting ends early, the room should not stay blocked until five o'clock.
-          Five minutes before each one is due to finish, whoever booked it gets a nudge — so the
-          room goes back into circulation instead of sitting empty with the door closed.
+          A meeting that ends early should not hold the room until five. Five minutes before each
+          one is due to finish, whoever booked it gets a nudge — and giving the room back is one
+          click, from the same screen they booked it on.
         </p>
       </div>
     </div>
@@ -659,15 +743,10 @@
       <div>
         <h2>It writes to your calendar, and it reads it back.</h2>
         <p class="prose" style="margin-block-start:1.25rem">
-          Every booking is written straight into Google Calendar as a real event, with the room
-          as a guest. Nothing sits in a separate system waiting to fall out of sync — the
-          calendar <b>is</b> the system.
-        </p>
-        <p class="prose">
-          So it runs both ways. Invite a room from Google Calendar and it appears in the planner
-          and fires the same notifications. Delete the event there and the room frees up here.
-          In practice people don't open another app — they schedule from the calendar they
-          already live in, and that keeps working.
+          There is no second system to fall out of sync — the calendar <b>is</b> the system. Invite
+          a room from Google Calendar and it lands in the planner; delete the event there and the
+          room frees up here. People schedule from the calendar they already live in, and that
+          keeps working.
         </p>
       </div>
     </div>
@@ -679,7 +758,8 @@
       <div>
         <h2>A direct message to the person it concerns.</h2>
         <p class="prose" style="margin-block-start:1.25rem">
-          Everything arrives as a DM. There's no extra channel for anyone to mute.
+          Everything arrives as a direct message to the person it concerns. There is no extra
+          channel for anyone to mute, and nothing fires in the evening or at the weekend.
         </p>
         <ul class="sched">
           <li>
@@ -700,8 +780,7 @@
           </li>
         </ul>
         <p class="prose" style="margin-block-start:1.75rem">
-          Slack is optional. The planner and the availability screen work without it, and it can be
-          connected later without touching anything else.
+          Optional, and connectable later without touching anything else.
         </p>
       </div>
     </div>
@@ -720,12 +799,9 @@
       <div>
         <h2>A live availability screen.</h2>
         <p class="prose" style="margin-block-start:1.25rem">
-          A second view built to sit on a monitor by the rooms or at reception: what's busy now,
-          what frees up and when. It refreshes itself, so nobody has to touch it.
-        </p>
-        <p class="prose">
-          It answers the question people ask by walking up and trying the handle — including
-          visitors, who have no access to any of this.
+          A self-refreshing view for a monitor by the rooms or at reception. It answers the question
+          people ask by walking up and trying the handle — visitors included, who have access to
+          none of this.
         </p>
       </div>
     </div>
@@ -796,7 +872,11 @@
     <div class="wrap row">
       <p class="rail">What it takes</p>
       <div>
-        <h2>Set up in an afternoon.</h2>
+        <h2>A weekend, not a project.</h2>
+        <p class="prose" style="margin-block-start:1.25rem">
+          No procurement, no servers to stand up, no migration. It runs inside the Google
+          Workspace you already pay for, against the room calendars you already have.
+        </p>
         <ul class="reqs">
           <li>
             <span class="tag req">Required</span>
@@ -824,17 +904,10 @@
       <p class="rail">Next step</p>
       <div>
         <h2>Twenty minutes and you'll see it with your own rooms.</h2>
-        <ul class="recap">
-          <li><p class="t">Weekly planner</p><p class="d">Every room, all week. Book by dragging; conflicts offer the next free window.</p></li>
-          <li><p class="t">Rooms that find you</p><p class="d">Meetings with no room, matched against what's free at that exact hour.</p></li>
-          <li><p class="t">Slack, by direct message</p><p class="d">Confirmation on booking, a reminder before it starts, a nudge before it ends, a digest each morning.</p></li>
-          <li><p class="t">Availability screen</p><p class="d">A self-refreshing view for reception or the wall beside the rooms.</p></li>
-          <li><p class="t">Works from the calendar</p><p class="d">Book or cancel in Google Calendar and the planner follows. Both directions.</p></li>
-          <li><p class="t">Nothing to run</p><p class="d">Inside your Google Workspace. No servers, no database, no monthly bill.</p></li>
-        </ul>
-        <p class="prose">
-          We'll set it up against your real calendars so the team can try it for a week.
-          If it isn't useful, it comes back out and nothing stays installed.
+        <p class="prose" style="margin-block-start:1.2rem">
+          A short call to see it against your real calendars. If it fits, it's running by the
+          following Monday and the team has a week to use it in anger. If it isn't useful, it
+          comes back out and nothing stays installed.
         </p>
         <div class="cta">
           <a class="btn btn-primary" href="mailto:isaacvazquezquiroz@gmail.com?subject=Room%20Booking%20walkthrough">Book a walkthrough</a>
