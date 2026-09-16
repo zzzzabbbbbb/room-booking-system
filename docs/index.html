@@ -9,16 +9,15 @@
   :root{
     --bg:#FFFFFF;
     --surface:#FFFFFF;
-    --raised:#F8FAFC;
+    --raised:#F7F8F9;
     --ink:#0B0B0C;
-    --muted:#4B5563;
-    --faint:#6B7280;
-    --line:#E5E7EB;
+    --muted:#454A52;
+    --faint:#767C85;
+    --rule:#E3E5E8;
+    --rule-strong:#C9CDD3;
     --accent:#1D4ED8;
     --accent-hover:#1E40AF;
-    --accent-wash:#EFF6FF;
     --accent-ink:#FFFFFF;
-    --radius:14px;
     --img-outline:oklch(0 0 0 / 0.1);
     --shadow-border:
       0px 0px 0px 1px oklch(0 0 0 / 0.06),
@@ -28,45 +27,54 @@
       0px 0px 0px 1px oklch(0 0 0 / 0.08),
       0px 1px 2px -1px oklch(0 0 0 / 0.08),
       0px 2px 4px 0px oklch(0 0 0 / 0.06);
-    --shadow:0 8px 24px rgba(0,0,0,.06);
     --shadow-lift:0 18px 48px rgba(11,11,12,.10);
+
+    --text-display:clamp(2.7rem,7.4vw,5.2rem);
+    --text-h2:clamp(1.65rem,3.5vw,2.55rem);
+    --text-h3:1.0625rem;
+    --text-lead:clamp(1.05rem,1.55vw,1.2rem);
+    --text-body:1rem;
+    --text-small:0.875rem;
+    --text-caption:0.8125rem;
+    --text-label:0.75rem;
+
+    --rail:7.5rem;
+    --gutter:2.75rem;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --bg:#0B0D10;
-      --surface:#14181D;
-      --raised:#181D23;
-      --ink:#F1F3F5;
-      --muted:#A8B2BD;
-      --faint:#8B95A1;
-      --line:#242B33;
-      --accent:#6693F5;
-      --accent-hover:#89ADF8;
-      --accent-wash:#141C2E;
-      --accent-ink:#0B0D10;
+      --bg:#08090B;
+      --surface:#101215;
+      --raised:#101215;
+      --ink:#F2F3F4;
+      --muted:#A9AEB6;
+      --faint:#7C838C;
+      --rule:#20242A;
+      --rule-strong:#333941;
+      --accent:#7AA0F7;
+      --accent-hover:#9CBAFA;
+      --accent-ink:#08090B;
       --img-outline:oklch(1 0 0 / 0.1);
       --shadow-border:0 0 0 1px oklch(1 0 0 / 0.08);
       --shadow-border-hover:0 0 0 1px oklch(1 0 0 / 0.13);
-      --shadow:0 8px 24px rgba(0,0,0,.45);
       --shadow-lift:0 18px 48px rgba(0,0,0,.55);
     }
   }
   :root[data-theme="dark"]{
-    --bg:#0B0D10;
-    --surface:#14181D;
-    --raised:#181D23;
-    --ink:#F1F3F5;
-    --muted:#A8B2BD;
-    --faint:#8B95A1;
-    --line:#242B33;
-    --accent:#6693F5;
-    --accent-hover:#89ADF8;
-    --accent-wash:#141C2E;
-    --accent-ink:#0B0D10;
+    --bg:#08090B;
+    --surface:#101215;
+    --raised:#101215;
+    --ink:#F2F3F4;
+    --muted:#A9AEB6;
+    --faint:#7C838C;
+    --rule:#20242A;
+    --rule-strong:#333941;
+    --accent:#7AA0F7;
+    --accent-hover:#9CBAFA;
+    --accent-ink:#08090B;
     --img-outline:oklch(1 0 0 / 0.1);
     --shadow-border:0 0 0 1px oklch(1 0 0 / 0.08);
     --shadow-border-hover:0 0 0 1px oklch(1 0 0 / 0.13);
-    --shadow:0 8px 24px rgba(0,0,0,.45);
     --shadow-lift:0 18px 48px rgba(0,0,0,.55);
   }
 
@@ -75,35 +83,89 @@
   body{
     background:var(--bg);
     color:var(--ink);
-    font:16px/1.6 "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size:var(--text-body);
+    line-height:1.6;
     -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
   }
   img{max-width:100%}
 
-  .wrap{max-width:1060px;margin:0 auto;padding-inline:20px}
+  .wrap{max-width:1080px;margin-inline:auto;padding-inline:24px}
 
-  h1,h2,h3{margin:0;letter-spacing:-.02em;text-wrap:balance}
-  h1{font-size:clamp(2.1rem,5.6vw,3.6rem);line-height:1.04;font-weight:700}
-  h2{font-size:clamp(1.5rem,3.4vw,2.1rem);line-height:1.15;font-weight:700}
-  h3{font-size:1.02rem;font-weight:700;letter-spacing:-.005em}
-  p{margin:0}
-
-  .eyebrow{
-    font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--accent);margin-bottom:14px;
+  /* ---- type scale ---- */
+  h1,h2,h3{margin:0;text-wrap:balance}
+  h1{
+    font-size:var(--text-display);
+    line-height:1.02;
+    font-weight:700;
+    letter-spacing:-0.035em;
   }
-  .lead{font-size:clamp(1.05rem,2vw,1.28rem);color:var(--muted);max-width:60ch}
+  h2{
+    font-size:var(--text-h2);
+    line-height:1.1;
+    font-weight:700;
+    letter-spacing:-0.025em;
+  }
+  h3{
+    font-size:var(--text-h3);
+    line-height:1.35;
+    font-weight:700;
+    letter-spacing:-0.008em;
+  }
+  p{margin:0;text-wrap:pretty}
+  .lead{
+    font-size:var(--text-lead);
+    line-height:1.5;
+    color:var(--muted);
+    max-width:62ch;
+  }
+  .prose{color:var(--muted);max-width:62ch}
+  .prose + .prose{margin-top:1.1rem}
+  .prose b{color:var(--ink);font-weight:700}
 
-  /* header */
+  /* ---- the rail: sections read like a day view ---- */
+  .row{
+    display:grid;
+    grid-template-columns:var(--rail) 1fr;
+    column-gap:var(--gutter);
+  }
+  .rail{
+    font-size:var(--text-label);
+    line-height:1.5;
+    letter-spacing:0.09em;
+    text-transform:uppercase;
+    color:var(--faint);
+    text-align:end;
+    padding-block-start:0.5em;
+    font-variant-numeric:tabular-nums;
+    white-space:nowrap;
+  }
+  @media (max-width:720px){
+    .row{grid-template-columns:1fr}
+    .rail{text-align:start;margin-block-end:1.25rem;padding-block-start:0}
+  }
+
+  section{padding-block:clamp(3.5rem,7vw,6rem)}
+  section + section,
+  .band + section{border-block-start:1px solid var(--rule)}
+
+  /* ---- header ---- */
   .nav{
     position:sticky;top:env(safe-area-inset-top,0px);z-index:10;
-    background:var(--bg);border-bottom:1px solid var(--line);
+    background:var(--bg);border-block-end:1px solid var(--rule);
   }
-  .nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:16px}
-  .brand{font-weight:700;font-size:1.05rem}
+  .nav .wrap{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:1rem;padding-block:0.9rem;
+  }
+  .brand{font-weight:700;font-size:var(--text-small);letter-spacing:-0.01em}
+
   .btn{
-    display:inline-block;border-radius:10px;padding:10px 18px;font-size:.92rem;font-weight:600;
-    text-decoration:none;
+    display:inline-block;border-radius:9px;
+    padding-inline:1.1rem;padding-block:0.6rem;
+    font-size:var(--text-small);font-weight:700;letter-spacing:-0.005em;
+    text-decoration:none;white-space:nowrap;
     transition-property:background-color,color,box-shadow,scale;
     transition-duration:150ms;
     transition-timing-function:ease-out;
@@ -113,95 +175,145 @@
   .btn-primary:hover{background:var(--accent-hover)}
   .btn-ghost{color:var(--ink);box-shadow:var(--shadow-border)}
   .btn-ghost:hover{color:var(--accent);box-shadow:var(--shadow-border-hover)}
-  a:focus-visible,.btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:10px}
+  a:focus-visible,.btn:focus-visible{
+    outline:2px solid var(--accent);outline-offset:3px;border-radius:9px;
+  }
 
-  /* sections */
-  section{padding-block:clamp(52px,8vw,92px)}
-  section + section{border-top:1px solid var(--line)}
-  .hero{padding-block:clamp(56px,9vw,104px) clamp(36px,5vw,56px)}
-  .hero .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+  /* ---- hero ---- */
+  .hero{padding-block:clamp(4rem,9vw,7.5rem) clamp(2.5rem,4vw,3.5rem)}
+  .hero h1{max-width:16ch}
+  .hero .lead{margin-block-start:1.5rem}
+  .cta{display:flex;flex-wrap:wrap;gap:0.75rem;margin-block-start:2rem}
 
-  /* screenshots */
-  .shot{margin:36px 0 0;}
+  /* ---- screenshots ---- */
+  .shot{margin:0}
   .shot img{
-    display:block;width:100%;border-radius:var(--radius);
+    display:block;width:100%;border-radius:12px;
     outline:1px solid var(--img-outline);outline-offset:-1px;
     box-shadow:var(--shadow-lift);background:var(--raised);
   }
-  .shot figcaption{margin-top:12px;font-size:.86rem;color:var(--faint)}
+  .shot figcaption{
+    margin-block-start:0.85rem;
+    font-size:var(--text-caption);color:var(--faint);
+  }
   .shot.missing img{display:none}
   .shot.missing::before{
     content:"Screenshot pending — add " attr(data-file);
     display:flex;align-items:center;justify-content:center;text-align:center;
-    aspect-ratio:16/10;max-width:100%;padding:24px;
-    border:1px dashed var(--line);border-radius:var(--radius);
-    background:var(--raised);color:var(--faint);font-size:.85rem;
+    aspect-ratio:16/10;padding:1.5rem;
+    border:1px dashed var(--rule-strong);border-radius:12px;
+    background:var(--raised);color:var(--faint);font-size:var(--text-caption);
+  }
+  .shot-wide{margin-block-start:clamp(2.5rem,5vw,4rem)}
+  .row > .shot{grid-column:2}
+  @media (max-width:720px){ .row > .shot{grid-column:1} }
+
+  /* ---- problem list: hairline rows, not cards ---- */
+  .list{margin-block-start:2.5rem;border-block-start:1px solid var(--rule)}
+  .list > li{
+    list-style:none;
+    display:grid;
+    grid-template-columns:var(--rail) 1fr;
+    column-gap:var(--gutter);
+    padding-block:1.6rem;
+    border-block-end:1px solid var(--rule);
+  }
+  .list{padding:0;margin-inline:0}
+  .list .idx{
+    font-size:var(--text-label);color:var(--faint);
+    text-align:end;font-variant-numeric:tabular-nums;
+    letter-spacing:0.09em;padding-block-start:0.35em;
+  }
+  .list p{color:var(--muted);font-size:var(--text-small);margin-block-start:0.3rem;max-width:56ch}
+  @media (max-width:720px){
+    .list > li{grid-template-columns:1fr;row-gap:0.5rem}
+    .list .idx{text-align:start;padding-block-start:0}
   }
 
-  /* feature grid */
-  .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:28px;margin-top:34px}
-  .col h3{margin-bottom:7px}
-  .col p{color:var(--muted);font-size:.95rem}
-  .col .mark{
-    display:inline-flex;align-items:center;justify-content:center;
-    width:30px;height:30px;border-radius:9px;margin-bottom:13px;
-    background:var(--accent-wash);color:var(--accent);
-    font-size:.78rem;font-weight:700;
+  /* ---- band ---- */
+  .band{
+    background:var(--raised);
+    border-block:1px solid var(--rule);
   }
 
-  /* highlight band */
-  .band{background:var(--raised);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-  .band + section{border-top:0}
-
-  /* steps */
-  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:22px;margin-top:34px}
-  .step{border-left:2px solid var(--accent);padding-left:16px}
-  .step .n{font-size:.72rem;font-weight:700;letter-spacing:.1em;color:var(--accent);display:block;margin-bottom:7px}
-  .step h3{margin-bottom:5px;font-size:.96rem}
-  .step p{color:var(--muted);font-size:.9rem}
-
-  /* timeline */
-  .timeline{list-style:none;margin:34px 0 0;padding:0;border-left:2px solid var(--line)}
-  .timeline li{position:relative;padding:0 0 26px 24px}
-  .timeline li:last-child{padding-bottom:0}
-  .timeline li::before{
-    content:"";position:absolute;left:-6px;top:8px;width:10px;height:10px;border-radius:50%;
-    background:var(--accent);border:2px solid var(--bg);
+  /* ---- sequence ---- */
+  .seq{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    margin-block-start:2.75rem;
+    border-block-start:1px solid var(--rule-strong);
   }
-  .timeline .when{display:block;font-size:.73rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:3px}
-  .timeline .what{color:var(--muted);font-size:.96rem}
+  .seq > li{
+    list-style:none;
+    padding-block-start:1.1rem;
+    padding-inline-end:1.5rem;
+  }
+  .seq .n{
+    display:block;font-size:var(--text-label);font-weight:700;
+    letter-spacing:0.09em;color:var(--accent);
+    font-variant-numeric:tabular-nums;margin-block-end:0.6rem;
+  }
+  .seq p{color:var(--muted);font-size:var(--text-caption);margin-block-start:0.3rem;line-height:1.5}
+  @media (max-width:860px){ .seq{grid-template-columns:repeat(2,1fr);row-gap:1.5rem} }
+  @media (max-width:480px){ .seq{grid-template-columns:1fr} }
 
-  /* requirements */
-  .reqs{list-style:none;margin:34px 0 0;padding:0}
-  .reqs li{display:flex;gap:16px;align-items:flex-start;padding:16px 0;border-top:1px solid var(--line)}
-  .reqs li:last-child{border-bottom:1px solid var(--line)}
+  /* ---- schedule (slack timeline) ---- */
+  .sched{margin-block-start:2.5rem;padding:0}
+  .sched > li{
+    list-style:none;
+    display:grid;grid-template-columns:8.5rem 1fr;
+    column-gap:1.75rem;
+    padding-block:1.1rem;
+    border-block-start:1px solid var(--rule);
+    align-items:baseline;
+  }
+  .sched > li:last-child{border-block-end:1px solid var(--rule)}
+  .sched .when{
+    font-size:var(--text-caption);font-weight:700;
+    color:var(--ink);font-variant-numeric:tabular-nums;
+    letter-spacing:-0.005em;
+  }
+  .sched .what{color:var(--muted);font-size:var(--text-small);max-width:52ch}
+  @media (max-width:620px){
+    .sched > li{grid-template-columns:1fr;row-gap:0.35rem}
+  }
+
+  /* ---- requirements ---- */
+  .reqs{margin-block-start:2.5rem;padding:0}
+  .reqs > li{
+    list-style:none;
+    display:grid;grid-template-columns:6rem 1fr;
+    column-gap:1.75rem;
+    padding-block:1.1rem;
+    border-block-start:1px solid var(--rule);
+    align-items:baseline;
+  }
+  .reqs > li:last-child{border-block-end:1px solid var(--rule)}
   .tag{
-    flex:0 0 84px;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-    color:var(--faint);padding-top:4px;
+    font-size:var(--text-label);font-weight:700;
+    letter-spacing:0.09em;text-transform:uppercase;color:var(--faint);
+    white-space:nowrap;
   }
   .tag.req{color:var(--accent)}
-  .reqs .txt{color:var(--muted);font-size:.97rem}
-  .reqs .txt b{color:var(--ink);font-weight:600}
+  .reqs .txt{color:var(--muted);font-size:var(--text-small);max-width:56ch}
+  .reqs .txt b{color:var(--ink);font-weight:700}
 
-  /* video */
+  /* ---- video ---- */
   .video-frame{
-    margin-top:34px;position:relative;aspect-ratio:16/9;width:100%;
-    border-radius:var(--radius);overflow:hidden;
+    margin-block-start:2.5rem;position:relative;aspect-ratio:16/9;width:100%;
+    border-radius:12px;overflow:hidden;
     background:var(--raised);box-shadow:var(--shadow-lift);
   }
   .video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 
-  /* close */
-  .close{
-    background:var(--surface);border-radius:var(--radius);
-    padding:clamp(28px,5vw,48px);box-shadow:var(--shadow-border);
-  }
-  .close h2{margin-bottom:12px}
-  .close p{color:var(--muted);max-width:52ch}
-  .close .cta{margin-top:26px}
+  /* ---- close ---- */
+  .close h2{max-width:18ch}
+  .close .prose{margin-block-start:1.1rem}
 
-  footer{border-top:1px solid var(--line);padding-block:30px calc(42px + env(safe-area-inset-bottom,0px))}
-  footer p{font-size:.84rem;color:var(--faint)}
+  footer{
+    border-block-start:1px solid var(--rule);
+    padding-block:1.75rem calc(2.5rem + env(safe-area-inset-bottom,0px));
+  }
+  footer p{font-size:var(--text-caption);color:var(--faint)}
 
   @media (prefers-reduced-motion: reduce){
     *{transition:none!important;animation:none!important}
@@ -212,7 +324,7 @@
 
 <header class="nav">
   <div class="wrap">
-    <span class="brand">Room Booking</span>
+    <span class="brand">Room&nbsp;Booking</span>
     <a class="btn btn-primary" href="#contact">Book a walkthrough</a>
   </div>
 </header>
@@ -221,18 +333,17 @@
 
   <section class="hero">
     <div class="wrap">
-      <p class="eyebrow">Meeting room scheduling</p>
       <h1>Stop hunting for a free meeting room.</h1>
-      <p class="lead" style="margin-top:20px">
+      <p class="lead">
         A weekly planner that runs on the Google Calendars your team already uses.
         See what's free, book it by dragging, and get a Slack DM before your meeting starts.
       </p>
       <div class="cta">
         <a class="btn btn-primary" href="#contact">Book a walkthrough</a>
-        <a class="btn btn-ghost" href="#how">See how it works</a>
+        <a class="btn btn-ghost" href="#booking">See how it works</a>
       </div>
 
-      <figure class="shot" data-file="screenshots/grid.png">
+      <figure class="shot shot-wide" data-file="screenshots/grid.png">
         <img src="screenshots/grid.png" alt="Weekly planner showing availability across three meeting rooms, Monday to Friday."
              onerror="this.closest('.shot').classList.add('missing')">
         <figcaption>The whole week, every room, one screen.</figcaption>
@@ -241,44 +352,54 @@
   </section>
 
   <section>
-    <div class="wrap">
-      <p class="eyebrow">The problem</p>
-      <h2>Three rooms and no certainty.</h2>
-      <p class="lead" style="margin-top:16px">What happens every day in an office without a system.</p>
-      <div class="cols">
-        <div class="col">
-          <span class="mark">01</span>
-          <h3>Nobody knows what's free</h3>
-          <p>You walk past all three rooms, or ask in a channel and wait for someone to answer.</p>
-        </div>
-        <div class="col">
-          <span class="mark">02</span>
-          <h3>Meetings with no room</h3>
-          <p>The meeting gets scheduled two weeks out. The room is forgotten. At 10:00 there's nowhere to sit.</p>
-        </div>
-        <div class="col">
-          <span class="mark">03</span>
-          <h3>Rooms booked and empty</h3>
-          <p>Held all afternoon for a meeting that got cancelled and nobody released.</p>
-        </div>
+    <div class="wrap row">
+      <p class="rail">The problem</p>
+      <div>
+        <h2>Three rooms and no certainty.</h2>
+        <ul class="list">
+          <li>
+            <span class="idx">01</span>
+            <div>
+              <h3>Nobody knows what's free</h3>
+              <p>You walk past all three rooms, or ask in a channel and wait for someone to answer.</p>
+            </div>
+          </li>
+          <li>
+            <span class="idx">02</span>
+            <div>
+              <h3>Meetings with no room</h3>
+              <p>The meeting gets scheduled two weeks out. The room is forgotten. At 10:00 there's nowhere to sit.</p>
+            </div>
+          </li>
+          <li>
+            <span class="idx">03</span>
+            <div>
+              <h3>Rooms booked and empty</h3>
+              <p>Held all afternoon for a meeting that got cancelled and nobody released.</p>
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
   </section>
 
-  <section id="how">
-    <div class="wrap">
-      <p class="eyebrow">Booking</p>
-      <h2>Drag across the slot you want. That's it.</h2>
-      <p class="lead" style="margin-top:16px">
-        Every room's week on a single screen. Select the time, name the meeting, and it becomes
-        a real Google Calendar event with the room attached.
-      </p>
-      <p style="margin-top:16px;color:var(--muted);max-width:60ch">
-        Try to take a slot that's already taken and it won't let you — it offers the next free
-        window in that room instead, so you're not left hunting manually.
-      </p>
-
-      <figure class="shot" data-file="screenshots/booking.png">
+  <section id="booking">
+    <div class="wrap row">
+      <p class="rail">Booking</p>
+      <div>
+        <h2>Drag across the slot you want. That's it.</h2>
+        <p class="prose" style="margin-block-start:1.25rem">
+          Every room's week on a single screen. Select the time, name the meeting, and it becomes
+          a real Google Calendar event with the room attached.
+        </p>
+        <p class="prose">
+          Try to take a slot that's already taken and it won't let you — it offers the next free
+          window in that room instead, so you're not left hunting manually.
+        </p>
+      </div>
+    </div>
+    <div class="wrap row">
+      <figure class="shot shot-wide" data-file="screenshots/booking.png">
         <img src="screenshots/booking.png" alt="Selecting a time range on the planner and confirming a room booking."
              onerror="this.closest('.shot').classList.add('missing')">
         <figcaption>Select, name it, book. The block appears immediately.</figcaption>
@@ -286,115 +407,121 @@
     </div>
   </section>
 
-  <section class="band">
-    <div class="wrap">
-      <p class="eyebrow">What makes it different</p>
-      <h2>It doesn't wait for you to go looking. It comes to you.</h2>
-      <p class="lead" style="margin-top:16px">
-        The system reads your meetings for the next seven days, finds the ones with no room
-        assigned, and tells you which rooms are free at exactly that time.
-      </p>
-
-      <div class="steps">
-        <div class="step">
-          <span class="n">STEP 1</span>
-          <h3>Reads your week</h3>
-          <p>Looks at your upcoming meetings inside working hours.</p>
-        </div>
-        <div class="step">
-          <span class="n">STEP 2</span>
-          <h3>Spots the orphans</h3>
-          <p>Picks out the ones with no room among the guests.</p>
-        </div>
-        <div class="step">
-          <span class="n">STEP 3</span>
-          <h3>Checks availability</h3>
-          <p>Works out which rooms are free in each of those windows.</p>
-        </div>
-        <div class="step">
-          <span class="n">STEP 4</span>
-          <h3>One click to fix it</h3>
-          <p>Adds the room to the meeting that already exists. No rescheduling.</p>
+  <div class="band">
+    <section>
+      <div class="wrap row">
+        <p class="rail">The difference</p>
+        <div>
+          <h2>It doesn't wait for you to go looking. It comes to you.</h2>
+          <p class="lead" style="margin-block-start:1.25rem">
+            The system reads your meetings for the next seven days, finds the ones with no room
+            assigned, and tells you which rooms are free at exactly that time.
+          </p>
+          <ol class="seq">
+            <li>
+              <span class="n">01</span>
+              <h3>Reads your week</h3>
+              <p>Looks at your upcoming meetings inside working hours.</p>
+            </li>
+            <li>
+              <span class="n">02</span>
+              <h3>Spots the orphans</h3>
+              <p>Picks out the ones with no room among the guests.</p>
+            </li>
+            <li>
+              <span class="n">03</span>
+              <h3>Checks availability</h3>
+              <p>Works out which rooms are free in each of those windows.</p>
+            </li>
+            <li>
+              <span class="n">04</span>
+              <h3>One click to fix it</h3>
+              <p>Adds the room to the meeting that already exists. No rescheduling.</p>
+            </li>
+          </ol>
         </div>
       </div>
+      <div class="wrap row">
+        <figure class="shot shot-wide" data-file="screenshots/recommendations.png">
+          <img src="screenshots/recommendations.png" alt="Recommended rooms listed for upcoming meetings that have no room assigned."
+               onerror="this.closest('.shot').classList.add('missing')">
+          <figcaption>Meetings without a room, and the rooms free at that hour.</figcaption>
+        </figure>
+      </div>
+    </section>
+  </div>
 
-      <figure class="shot" data-file="screenshots/recommendations.png">
-        <img src="screenshots/recommendations.png" alt="Recommended rooms listed for upcoming meetings that have no room assigned."
-             onerror="this.closest('.shot').classList.add('missing')">
-        <figcaption>Meetings without a room, and the rooms free at that hour.</figcaption>
-      </figure>
-
-      <p style="margin-top:30px;color:var(--muted);max-width:60ch">
-        This is the part a shared calendar can't do, however well organised it is.
-      </p>
+  <section>
+    <div class="wrap row">
+      <p class="rail">No new habits</p>
+      <div>
+        <h2>It works from Google Calendar too.</h2>
+        <p class="prose" style="margin-block-start:1.25rem">
+          In practice people don't open another app — they schedule from the calendar they already
+          live in. Invite the room as a guest from Google Calendar and it shows up in the planner
+          and fires the same notifications, exactly as if it came from here.
+        </p>
+        <p class="prose">
+          The system adapts to how your team already works instead of asking them to change.
+        </p>
+      </div>
     </div>
   </section>
 
   <section>
-    <div class="wrap">
-      <p class="eyebrow">No new habits</p>
-      <h2>It works from Google Calendar too.</h2>
-      <p class="lead" style="margin-top:16px">
-        In practice people don't open another app — they schedule from the calendar they already
-        live in. Invite the room as a guest from Google Calendar and it shows up in the planner
-        and fires the same notifications, exactly as if it came from here.
-      </p>
-      <p style="margin-top:16px;color:var(--muted);max-width:60ch">
-        The system adapts to how your team already works instead of asking them to change.
-      </p>
+    <div class="wrap row">
+      <p class="rail">Slack</p>
+      <div>
+        <h2>A direct message to the person it concerns.</h2>
+        <p class="prose" style="margin-block-start:1.25rem">
+          Everything arrives as a DM. There's no extra channel for anyone to mute.
+        </p>
+        <ul class="sched">
+          <li>
+            <span class="when">On booking</span>
+            <span class="what">Confirmation to whoever booked and to the attendees, with the room and the time.</span>
+          </li>
+          <li>
+            <span class="when">5 min before</span>
+            <span class="what">A reminder, so nobody is late to their own meeting.</span>
+          </li>
+          <li>
+            <span class="when">5 min to close</span>
+            <span class="what">A nudge to wrap up and free the room for whoever is next.</span>
+          </li>
+          <li>
+            <span class="when">08:00 daily</span>
+            <span class="what">A digest: what's scheduled and what's still open.</span>
+          </li>
+        </ul>
+        <p class="prose" style="margin-block-start:1.75rem">
+          Slack is optional. The planner and the availability screen work without it, and it can be
+          connected later without touching anything else.
+        </p>
+      </div>
     </div>
-  </section>
-
-  <section>
-    <div class="wrap">
-      <p class="eyebrow">Slack</p>
-      <h2>A direct message to the person it concerns.</h2>
-      <p class="lead" style="margin-top:16px">
-        Everything arrives as a DM. There's no extra channel for anyone to mute.
-      </p>
-
-      <ul class="timeline">
-        <li>
-          <span class="when">On booking</span>
-          <span class="what">Confirmation to whoever booked and to the attendees, with the room and the time.</span>
-        </li>
-        <li>
-          <span class="when">5 minutes before it starts</span>
-          <span class="what">A reminder, so nobody is late to their own meeting.</span>
-        </li>
-        <li>
-          <span class="when">5 minutes before it ends</span>
-          <span class="what">A nudge to wrap up and free the room for whoever is next.</span>
-        </li>
-        <li>
-          <span class="when">8:00 AM</span>
-          <span class="what">A daily digest: what's scheduled and what's still open.</span>
-        </li>
-      </ul>
-
-      <figure class="shot" data-file="screenshots/slack.png">
+    <div class="wrap row">
+      <figure class="shot shot-wide" data-file="screenshots/slack.png">
         <img src="screenshots/slack.png" alt="Slack direct message confirming a room booking."
              onerror="this.closest('.shot').classList.add('missing')">
         <figcaption>Booking confirmations and reminders, in Slack.</figcaption>
       </figure>
-
-      <p style="margin-top:30px;color:var(--muted);max-width:60ch">
-        Slack is optional. The planner and the availability screen work without it, and it can be
-        connected later without touching anything else.
-      </p>
     </div>
   </section>
 
   <section>
-    <div class="wrap">
-      <p class="eyebrow">Front desk</p>
-      <h2>A live availability screen.</h2>
-      <p class="lead" style="margin-top:16px">
-        A second view built to sit on a monitor by the rooms or at reception: what's busy now,
-        what frees up and when. It refreshes itself.
-      </p>
-
-      <figure class="shot" data-file="screenshots/dashboard.png">
+    <div class="wrap row">
+      <p class="rail">Front desk</p>
+      <div>
+        <h2>A live availability screen.</h2>
+        <p class="prose" style="margin-block-start:1.25rem">
+          A second view built to sit on a monitor by the rooms or at reception: what's busy now,
+          what frees up and when. It refreshes itself.
+        </p>
+      </div>
+    </div>
+    <div class="wrap row">
+      <figure class="shot shot-wide" data-file="screenshots/dashboard.png">
         <img src="screenshots/dashboard.png" alt="Real-time room availability dashboard."
              onerror="this.closest('.shot').classList.add('missing')">
         <figcaption>Live room availability, no interaction needed.</figcaption>
@@ -411,69 +538,84 @@
     Loom embed URLs look like:    https://www.loom.com/embed/VIDEO_ID
   -->
   <section id="walkthrough" hidden>
-    <div class="wrap">
-      <p class="eyebrow">Walkthrough</p>
-      <h2>Four minutes, end to end.</h2>
-      <div class="video-frame">
-        <iframe src="" title="Room Booking walkthrough"
-                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen></iframe>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="wrap">
-      <p class="eyebrow">How it runs</p>
-      <h2>On top of what you already have.</h2>
-      <div class="cols">
-        <div class="col">
-          <h3>They're your calendars</h3>
-          <p>Every booking is a real Google Calendar event with the room as a guest. It shows on a phone, in Outlook, anywhere.</p>
-        </div>
-        <div class="col">
-          <h3>No servers</h3>
-          <p>It runs inside Google Workspace. Nothing to maintain, no database, no monthly infrastructure bill.</p>
-        </div>
-        <div class="col">
-          <h3>Nothing new to learn</h3>
-          <p>If your team uses Google Calendar and Slack, they already know how to use this.</p>
+    <div class="wrap row">
+      <p class="rail">Walkthrough</p>
+      <div>
+        <h2>Four minutes, end to end.</h2>
+        <div class="video-frame">
+          <iframe src="" title="Room Booking walkthrough"
+                  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
         </div>
       </div>
     </div>
   </section>
 
   <section>
-    <div class="wrap">
-      <p class="eyebrow">What it takes</p>
-      <h2>Set up in an afternoon.</h2>
-      <ul class="reqs">
-        <li>
-          <span class="tag req">Required</span>
-          <span class="txt"><b>Your room calendars</b> — the resources already registered in Google Workspace.</span>
-        </li>
-        <li>
-          <span class="tag req">Required</span>
-          <span class="txt"><b>An account on your domain</b> to deploy from, so the system belongs to you from day one.</span>
-        </li>
-        <li>
-          <span class="tag">Optional</span>
-          <span class="txt"><b>Slack</b>, if you want the automatic confirmations and reminders.</span>
-        </li>
-        <li>
-          <span class="tag">Optional</span>
-          <span class="txt"><b>A screen</b> to leave the availability view running at reception.</span>
-        </li>
-      </ul>
+    <div class="wrap row">
+      <p class="rail">How it runs</p>
+      <div>
+        <h2>On top of what you already have.</h2>
+        <ul class="list">
+          <li>
+            <span class="idx">01</span>
+            <div>
+              <h3>They're your calendars</h3>
+              <p>Every booking is a real Google Calendar event with the room as a guest. It shows on a phone, in Outlook, anywhere.</p>
+            </div>
+          </li>
+          <li>
+            <span class="idx">02</span>
+            <div>
+              <h3>No servers</h3>
+              <p>It runs inside Google Workspace. Nothing to maintain, no database, no monthly infrastructure bill.</p>
+            </div>
+          </li>
+          <li>
+            <span class="idx">03</span>
+            <div>
+              <h3>Nothing new to learn</h3>
+              <p>If your team uses Google Calendar and Slack, they already know how to use this.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </section>
 
-  <section id="contact">
-    <div class="wrap">
-      <div class="close">
-        <p class="eyebrow">Next step</p>
+  <section>
+    <div class="wrap row">
+      <p class="rail">What it takes</p>
+      <div>
+        <h2>Set up in an afternoon.</h2>
+        <ul class="reqs">
+          <li>
+            <span class="tag req">Required</span>
+            <span class="txt"><b>Your room calendars</b> — the resources already registered in Google Workspace.</span>
+          </li>
+          <li>
+            <span class="tag req">Required</span>
+            <span class="txt"><b>An account on your domain</b> to deploy from, so the system belongs to you from day one.</span>
+          </li>
+          <li>
+            <span class="tag">Optional</span>
+            <span class="txt"><b>Slack</b>, if you want the automatic confirmations and reminders.</span>
+          </li>
+          <li>
+            <span class="tag">Optional</span>
+            <span class="txt"><b>A screen</b> to leave the availability view running at reception.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="close">
+    <div class="wrap row">
+      <p class="rail">Next step</p>
+      <div>
         <h2>Twenty minutes and you'll see it with your own rooms.</h2>
-        <p>
+        <p class="prose">
           We'll set it up against your real calendars so the team can try it for a week.
           If it isn't useful, it comes back out and nothing stays installed.
         </p>
