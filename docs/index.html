@@ -395,7 +395,12 @@
         </p>
         <p class="prose">
           Try to take a slot that's already taken and it won't let you — it offers the next free
-          window in that room instead, so you're not left hunting manually.
+          window in that room instead, so you're not left hunting manually. Ask for
+          <b>quick suggestions</b> and it lists every open gap across the week.
+        </p>
+        <p class="prose">
+          Each room carries its capacity, so a pair doesn't take the ten-seater. Adding a client
+          or a candidate is one field — they get the invite like any other guest.
         </p>
       </div>
     </div>
@@ -444,14 +449,42 @@
         </div>
       </div>
       <div class="wrap row">
-        <figure class="shot shot-wide" data-file="screenshots/recommendations.png">
-          <img src="screenshots/recommendations.png" alt="Recommended rooms listed for upcoming meetings that have no room assigned."
-               onerror="this.closest('.shot').classList.add('missing')">
+        <figure class="shot shot-wide" data-file="screenshots/recommendations.mp4">
+          <video src="screenshots/recommendations.mp4" autoplay muted loop playsinline
+                 aria-label="Picking a free room for a meeting that had none, from the recommendations panel."
+                 onerror="this.closest('.shot').classList.add('missing')"></video>
           <figcaption>Meetings without a room, and the rooms free at that hour.</figcaption>
         </figure>
       </div>
     </section>
   </div>
+
+  <section>
+    <div class="wrap row">
+      <p class="rail">After booking</p>
+      <div>
+        <h2>Your day, and one click to give a room back.</h2>
+        <p class="prose" style="margin-block-start:1.25rem">
+          Today's bookings sit under the planner: what you reserved, which room, what time.
+          Cancel from there and the room is free for everyone immediately — no hunting through
+          a calendar for the event you made this morning.
+        </p>
+        <p class="prose">
+          This is what answers the third problem above. A room held all afternoon for a meeting
+          that died at noon costs everyone else the afternoon, and the five-minute nudge before
+          each meeting ends is there to stop exactly that.
+        </p>
+      </div>
+    </div>
+    <div class="wrap row">
+      <figure class="shot shot-wide" data-file="screenshots/mybookings.mp4">
+        <video src="screenshots/mybookings.mp4" autoplay muted loop playsinline
+               aria-label="Today's bookings listed under the planner, and cancelling one."
+               onerror="this.closest('.shot').classList.add('missing')"></video>
+        <figcaption>Today's bookings, and giving one back.</figcaption>
+      </figure>
+    </div>
+  </section>
 
   <section>
     <div class="wrap row">
@@ -497,6 +530,10 @@
           </li>
         </ul>
         <p class="prose" style="margin-block-start:1.75rem">
+          The bot also keeps a home tab: live availability, a shortcut into the planner and the
+          dashboard, without leaving Slack at all.
+        </p>
+        <p class="prose">
           Slack is optional. The planner and the availability screen work without it, and it can be
           connected later without touching anything else.
         </p>
@@ -507,6 +544,13 @@
         <img src="screenshots/slack.png" alt="Slack direct message confirming a room booking."
              onerror="this.closest('.shot').classList.add('missing')">
         <figcaption>Booking confirmations and reminders, in Slack.</figcaption>
+      </figure>
+    </div>
+    <div class="wrap row">
+      <figure class="shot shot-wide" data-file="screenshots/slackhome.png">
+        <img src="screenshots/slackhome.png" alt="The bot's home tab in Slack, showing availability and shortcuts."
+             onerror="this.closest('.shot').classList.add('missing')">
+        <figcaption>The bot's home tab.</figcaption>
       </figure>
     </div>
   </section>
