@@ -46,3 +46,8 @@ coverage/
 *.temp
 tmp/
 temp/
+
+# Third-party agent skills (npx skills add)
+.agents/
+.claude/
+skills-lock.json
