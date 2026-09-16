@@ -156,9 +156,11 @@ Guarda los tres en un bloc de notas antes de seguir.
 | `Dashboard.html` | Archivo HTML | `.html` | `Dashboard` |
 | `bot-home.html` | Archivo HTML | `.html` | `bot-home` |
 | `Diagnostic.js` | ⚪ Archivo de script | `.gs` | `Diagnostic` |
+| `Setup.js` | ⚪ Archivo de script | `.gs` | `Setup` |
 
-> `Diagnostic.js` es opcional y **solo para la demo** — verifica el Paso 0 desde
-> Apps Script. Bórralo antes del despliegue real en casa del cliente.
+> `Diagnostic.js` y `Setup.js` son opcionales y **solo para la demo**: uno verifica
+> el Paso 0 desde Apps Script, el otro escribe las Script Properties de un jalón
+> validándolas. Bórralos antes del despliegue real en casa del cliente.
 
 > ⚠️ **Los nombres `UI` y `Dashboard` son obligatorios y sensibles a mayúsculas.**
 > El código los carga por nombre (`createTemplateFromFile('UI')`). Si los
@@ -560,6 +562,20 @@ Igual con `testSlackIntegration` si necesitas reprobar la conexión en vivo.
 - [ ] Hay 4–6 eventos sembrados para que no se vea vacío (A10)
 - [ ] La zona horaria cuadra con la hora de la reunión (A5)
 - [ ] ⚪ Con Slack: llegó el mensaje de `testSlackIntegration` y hay 4 triggers
+
+---
+
+## Después de grabar — no te saltes esto
+
+Cosas que quedan encendidas y que hay que apagar:
+
+| | Qué | Por qué |
+|---|---|---|
+| ⏰ | **Borra los 4 triggers** (Activadores → `⋮` → Eliminar) | Cada minuto × 4 se pasa de la cuota de 90 min/día de una cuenta Gmail gratuita. Vuelve a crearlos el día de la demo en vivo. |
+| 🕕 | **Regresa `OFFICE_HOURS.endHour` a `17`** en `bot.js` | Lo subiste a 23 para poder probar de noche. |
+| 🔑 | **Rota el Slack bot token** | OAuth & Permissions → revoca y reinstala. Cualquier token que hayas pegado en un chat o en un archivo ya no es privado. |
+| 🧹 | **Limpia `Setup.js`** | Regresa los placeholders o borra el archivo. El token no debe vivir en un archivo de código. |
+| 🗑️ | **`cleanupDiagnosticEvents()`** | Borra los eventos `[DIAGNOSTICO]` que hayan quedado sueltos. |
 
 ---
 
