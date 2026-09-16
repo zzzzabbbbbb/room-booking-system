@@ -35,8 +35,6 @@ Aim for **under 2 MB**; raise `-crf` to 30 if it comes out heavier.
 
 ## How to capture them
 
-## How to capture them
-
 **Hide the browser chrome first.** Chrome → ⋮ → Cast, save and share → Create shortcut
 → tick "Open as window". No address bar, no tabs, no bookmarks — it reads as an
 application rather than a web page, and the Apps Script URL never appears.
