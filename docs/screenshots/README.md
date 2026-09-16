@@ -6,11 +6,34 @@ frame instead of a broken image, so the page stays presentable while you work.
 
 | File | What to capture |
 |---|---|
-| `grid.png` | The weekly planner, full week, all three rooms, with bookings seeded |
-| `booking.png` | Mid-booking: a time range selected and the confirmation panel open |
-| `recommendations.png` | "Recommended rooms for my meetings", showing a meeting with no room and the free rooms |
+| `grid.mp4` | **Clip.** The planner scrolling across the week, all three rooms, with bookings seeded |
+| `booking.mp4` | **Clip.** Dragging across a free slot, naming the meeting, and the block appearing |
+| `recommendations.png` | "Recommended rooms for my meetings" — **with a room picked in the dropdown**, not left on "Choose room" |
 | `slack.png` | The Slack DM confirming a booking |
 | `dashboard.png` | The live availability dashboard (`?page=dashboard`) |
+
+## The two clips
+
+Motion earns its place on these two: the week is a continuous horizontal scroll, and
+booking is a drag. Neither reads from a still frame.
+
+Keep them **4–8 seconds**, one gesture each, no cursor hunting. They autoplay muted on
+a loop, so they need no beginning or end — just the movement.
+
+**Record** with QuickTime (File → New Screen Recording), then convert:
+
+```bash
+ffmpeg -i raw.mov -vf "scale=1440:-2" -c:v libx264 -crf 28 -preset slow \
+       -movflags +faststart -an -pix_fmt yuv420p grid.mp4
+```
+
+`-an` strips audio, `+faststart` lets playback begin before the file finishes loading.
+Aim for **under 2 MB**; raise `-crf` to 30 if it comes out heavier.
+
+> **Not GIF.** The same clip as a GIF runs 10–20x larger and looks worse. If you would
+> rather use a still for either slot, say so and the markup swaps back to an image.
+
+## How to capture them
 
 ## How to capture them
 

@@ -187,7 +187,7 @@
 
   /* ---- screenshots ---- */
   .shot{margin:0}
-  .shot img{
+  .shot img,.shot video{
     display:block;width:100%;border-radius:12px;
     outline:1px solid var(--img-outline);outline-offset:-1px;
     box-shadow:var(--shadow-lift);background:var(--raised);
@@ -196,7 +196,7 @@
     margin-block-start:0.85rem;
     font-size:var(--text-caption);color:var(--faint);
   }
-  .shot.missing img{display:none}
+  .shot.missing img,.shot.missing video{display:none}
   .shot.missing::before{
     content:"Screenshot pending — add " attr(data-file);
     display:flex;align-items:center;justify-content:center;text-align:center;
@@ -343,10 +343,11 @@
         <a class="btn btn-ghost" href="#booking">See how it works</a>
       </div>
 
-      <figure class="shot shot-wide" data-file="screenshots/grid.png">
-        <img src="screenshots/grid.png" alt="Weekly planner showing availability across three meeting rooms, Monday to Friday."
-             onerror="this.closest('.shot').classList.add('missing')">
-        <figcaption>The whole week, every room, one screen.</figcaption>
+      <figure class="shot shot-wide" data-file="screenshots/grid.mp4">
+        <video src="screenshots/grid.mp4" autoplay muted loop playsinline
+               aria-label="Weekly planner scrolling across three meeting rooms, Monday to Friday."
+               onerror="this.closest('.shot').classList.add('missing')"></video>
+        <figcaption>Every room, all week, in one continuous view.</figcaption>
       </figure>
     </div>
   </section>
@@ -389,7 +390,7 @@
       <div>
         <h2>Drag across the slot you want. That's it.</h2>
         <p class="prose" style="margin-block-start:1.25rem">
-          Every room's week on a single screen. Select the time, name the meeting, and it becomes
+          Scroll the week across every room, select the time, name the meeting — and it becomes
           a real Google Calendar event with the room attached.
         </p>
         <p class="prose">
@@ -399,9 +400,10 @@
       </div>
     </div>
     <div class="wrap row">
-      <figure class="shot shot-wide" data-file="screenshots/booking.png">
-        <img src="screenshots/booking.png" alt="Selecting a time range on the planner and confirming a room booking."
-             onerror="this.closest('.shot').classList.add('missing')">
+      <figure class="shot shot-wide" data-file="screenshots/booking.mp4">
+        <video src="screenshots/booking.mp4" autoplay muted loop playsinline
+               aria-label="Dragging across a time range on the planner and confirming a room booking."
+               onerror="this.closest('.shot').classList.add('missing')"></video>
         <figcaption>Select, name it, book. The block appears immediately.</figcaption>
       </figure>
     </div>
@@ -628,6 +630,15 @@
   </section>
 
 </main>
+
+<script>
+  // An autoplaying loop is motion; under reduced motion hand over the controls instead.
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.shot video').forEach(function (v) {
+      v.autoplay = false; v.loop = false; v.controls = true; v.pause();
+    });
+  }
+</script>
 
 <footer>
   <div class="wrap">
