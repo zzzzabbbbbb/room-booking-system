@@ -26,10 +26,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Pages must be switched on once by a repo admin
+      # (Settings → Pages → Source: GitHub Actions). The Actions token can
+      # deploy to an existing site but cannot create one.
       - name: Configure Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Upload docs/
         uses: actions/upload-pages-artifact@v3
