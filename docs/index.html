@@ -144,6 +144,16 @@
     font-variant-numeric:tabular-nums;
     white-space:nowrap;
   }
+  .rail::before{
+    content:attr(data-n);
+    display:block;
+    color:var(--accent);
+    letter-spacing:0.12em;
+    margin-block-end:0.35rem;
+  }
+  @media (max-width:720px){
+    .rail::before{display:inline;margin-inline-end:0.6rem}
+  }
   @media (max-width:720px){
     .row{grid-template-columns:1fr}
     .rail{text-align:start;margin-block-end:1.25rem;padding-block-start:0}
@@ -247,6 +257,12 @@
     display:block;width:100%;border-radius:12px;
     outline:1px solid var(--img-outline);outline-offset:-1px;
     box-shadow:var(--shadow-lift);background:var(--raised);
+    transition-property:box-shadow,scale;
+    transition-duration:250ms;
+    transition-timing-function:cubic-bezier(0.2,0,0,1);
+  }
+  @media (hover:hover){
+    .shot:hover img,.shot:hover video{scale:1.008;box-shadow:0 26px 64px rgba(11,11,12,.16)}
   }
   .shot figcaption{
     margin-block-start:0.85rem;
@@ -276,10 +292,11 @@
   }
   .list{padding:0;margin-inline:0}
   .list .idx{
-    font-size:var(--text-label);color:var(--faint);
+    font-size:var(--text-caption);color:var(--accent);font-weight:700;
     text-align:end;font-variant-numeric:tabular-nums;
-    letter-spacing:0.09em;padding-block-start:0.35em;
+    letter-spacing:-0.01em;padding-block-start:0.15em;
   }
+  @media (max-width:720px){ .list .idx{font-size:var(--text-label)} }
   .list p{color:var(--muted);font-size:var(--text-small);margin-block-start:0.3rem;max-width:56ch}
   @media (max-width:720px){
     .list > li{grid-template-columns:1fr;row-gap:0.5rem}
@@ -362,6 +379,18 @@
   .video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 
   /* ---- close ---- */
+  .recap{
+    display:grid;grid-template-columns:repeat(2,1fr);
+    gap:1.4rem 2.5rem;margin-block:2rem 2.5rem;padding:0;
+  }
+  .recap > li{list-style:none}
+  .recap dt,.recap .t{
+    font-weight:700;font-size:var(--text-small);letter-spacing:-0.005em;
+    margin-block-end:0.2rem;
+  }
+  .recap .d{color:var(--muted);font-size:var(--text-caption);line-height:1.5}
+  @media (max-width:620px){ .recap{grid-template-columns:1fr;gap:1.2rem} }
+
   .close h2{max-width:18ch}
   .close .prose{margin-block-start:1.1rem}
 
@@ -404,8 +433,8 @@
     <div class="wrap">
       <h1>Stop hunting for a free meeting room.</h1>
       <p class="lead">
-        A weekly planner that runs on the Google Calendars your team already uses.
-        See what's free, book it by dragging, and get a Slack DM before it starts.
+        Every room's week in one view, running on the Google Calendars your team already
+        uses. Drag to book — and it's a real calendar event the moment you let go.
       </p>
       <div class="cta">
         <a class="btn btn-primary" href="#contact">Book a walkthrough</a>
@@ -484,26 +513,30 @@
       <p class="rail">The problem</p>
       <div>
         <h2>Three rooms and no certainty.</h2>
+        <p class="prose" style="margin-block-start:1.25rem">A normal Tuesday.</p>
         <ul class="list">
           <li>
-            <span class="idx">01</span>
+            <span class="idx">09:40</span>
             <div>
-              <h3>Nobody knows what's free</h3>
-              <p>You walk past all three rooms, or ask in a channel and wait for someone to answer.</p>
+              <h3>You walk the floor to find out</h3>
+              <p>Past all three doors, reading through the glass. Or you ask in a channel and wait,
+                 and the answer arrives after you've already sat down somewhere else.</p>
             </div>
           </li>
           <li>
-            <span class="idx">02</span>
+            <span class="idx">10:00</span>
             <div>
-              <h3>Meetings with no room</h3>
-              <p>The meeting gets scheduled two weeks out. The room is forgotten. At 10:00 there's nowhere to sit.</p>
+              <h3>The meeting has no room</h3>
+              <p>Booked two weeks ago, room forgotten. Six people are standing in a corridor
+                 deciding whose desk to crowd around.</p>
             </div>
           </li>
           <li>
-            <span class="idx">03</span>
+            <span class="idx">14:00</span>
             <div>
-              <h3>Rooms booked and empty</h3>
-              <p>Held all afternoon for a meeting that got cancelled and nobody released.</p>
+              <h3>A room is held, and empty</h3>
+              <p>Blocked until five for a meeting that ended at noon. The door is closed, the
+                 lights are off, and the calendar still says busy.</p>
             </div>
           </li>
         </ul>
@@ -791,6 +824,14 @@
       <p class="rail">Next step</p>
       <div>
         <h2>Twenty minutes and you'll see it with your own rooms.</h2>
+        <ul class="recap">
+          <li><p class="t">Weekly planner</p><p class="d">Every room, all week. Book by dragging; conflicts offer the next free window.</p></li>
+          <li><p class="t">Rooms that find you</p><p class="d">Meetings with no room, matched against what's free at that exact hour.</p></li>
+          <li><p class="t">Slack, by direct message</p><p class="d">Confirmation on booking, a reminder before it starts, a nudge before it ends, a digest each morning.</p></li>
+          <li><p class="t">Availability screen</p><p class="d">A self-refreshing view for reception or the wall beside the rooms.</p></li>
+          <li><p class="t">Works from the calendar</p><p class="d">Book or cancel in Google Calendar and the planner follows. Both directions.</p></li>
+          <li><p class="t">Nothing to run</p><p class="d">Inside your Google Workspace. No servers, no database, no monthly bill.</p></li>
+        </ul>
         <p class="prose">
           We'll set it up against your real calendars so the team can try it for a week.
           If it isn't useful, it comes back out and nothing stays installed.
@@ -805,6 +846,11 @@
 </main>
 
 <script>
+  // The rail doubles as the page's index, so the numbers follow what is actually shown.
+  document.querySelectorAll('section:not([hidden]) .rail').forEach(function (el, i) {
+    el.dataset.n = String(i + 1).padStart(2, '0');
+  });
+
   // An autoplaying loop is motion; under reduced motion hand over the controls instead.
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     document.querySelectorAll('.shot video').forEach(function (v) {
