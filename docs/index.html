@@ -449,10 +449,9 @@
         </div>
       </div>
       <div class="wrap row">
-        <figure class="shot shot-wide" data-file="screenshots/recommendations.mp4">
-          <video src="screenshots/recommendations.mp4" autoplay muted loop playsinline
-                 aria-label="Picking a free room for a meeting that had none, from the recommendations panel."
-                 onerror="this.closest('.shot').classList.add('missing')"></video>
+        <figure class="shot shot-wide" data-file="screenshots/recommendations.png">
+          <img src="screenshots/recommendations.png" alt="Recommended rooms listed for upcoming meetings that have no room assigned."
+               onerror="this.closest('.shot').classList.add('missing')">
           <figcaption>Meetings without a room, and the rooms free at that hour.</figcaption>
         </figure>
       </div>
@@ -490,14 +489,17 @@
     <div class="wrap row">
       <p class="rail">No new habits</p>
       <div>
-        <h2>It works from Google Calendar too.</h2>
+        <h2>It writes to your calendar, and it reads it back.</h2>
         <p class="prose" style="margin-block-start:1.25rem">
-          In practice people don't open another app — they schedule from the calendar they already
-          live in. Invite the room as a guest from Google Calendar and it shows up in the planner
-          and fires the same notifications, exactly as if it came from here.
+          Every booking is written straight into Google Calendar as a real event, with the room
+          as a guest. Nothing sits in a separate system waiting to fall out of sync — the
+          calendar <b>is</b> the system.
         </p>
         <p class="prose">
-          The system adapts to how your team already works instead of asking them to change.
+          So it runs both ways. Invite a room from Google Calendar and it appears in the planner
+          and fires the same notifications. Delete the event there and the room frees up here.
+          In practice people don't open another app — they schedule from the calendar they
+          already live in, and that keeps working.
         </p>
       </div>
     </div>
@@ -530,10 +532,6 @@
           </li>
         </ul>
         <p class="prose" style="margin-block-start:1.75rem">
-          The bot also keeps a home tab: live availability, a shortcut into the planner and the
-          dashboard, without leaving Slack at all.
-        </p>
-        <p class="prose">
           Slack is optional. The planner and the availability screen work without it, and it can be
           connected later without touching anything else.
         </p>
@@ -544,13 +542,6 @@
         <img src="screenshots/slack.png" alt="Slack direct message confirming a room booking."
              onerror="this.closest('.shot').classList.add('missing')">
         <figcaption>Booking confirmations and reminders, in Slack.</figcaption>
-      </figure>
-    </div>
-    <div class="wrap row">
-      <figure class="shot shot-wide" data-file="screenshots/slackhome.png">
-        <img src="screenshots/slackhome.png" alt="The bot's home tab in Slack, showing availability and shortcuts."
-             onerror="this.closest('.shot').classList.add('missing')">
-        <figcaption>The bot's home tab.</figcaption>
       </figure>
     </div>
   </section>

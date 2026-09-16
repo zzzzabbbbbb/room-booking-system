@@ -1,6 +1,6 @@
 # Screenshots for the demo page
 
-Drop the five files below into this folder, named exactly as listed. The page picks
+Drop the six files below into this folder, named exactly as listed. The page picks
 them up automatically; any that are missing render as a dashed "Screenshot pending"
 frame instead of a broken image, so the page stays presentable while you work.
 
@@ -8,17 +8,15 @@ frame instead of a broken image, so the page stays presentable while you work.
 |---|---|
 | `grid.mp4` | **Clip.** The planner scrolling across the week, all three rooms |
 | `booking.mp4` | **Clip.** Dragging a free slot and the block appearing |
-| `recommendations.mp4` | **Clip.** Open the recommendations panel, **pick a room from the dropdown**, assign it |
 | `mybookings.mp4` | **Clip.** Today's bookings under the planner, then cancelling one |
+| `recommendations.png` | "Recommended rooms for my meetings" — **with a room picked in the dropdown** |
 | `slack.png` | The Slack DM confirming a booking |
-| `slackhome.png` | The bot's home tab in Slack |
 | `dashboard.png` | The live availability dashboard (`?page=dashboard`) |
 
 ## The clips
 
-Motion earns its place on these four. The week is a continuous scroll and booking is a
-drag, so neither reads from a still frame. The recommendations panel only makes its point
-once a room is chosen and assigned, and cancelling is a before-and-after.
+Motion earns its place on these three. The week is a continuous scroll, booking is a drag,
+and cancelling is a before-and-after — none of them read from a still frame.
 
 Keep them **4–8 seconds**, one gesture each, no cursor hunting. They autoplay muted on
 a loop, so they need no beginning or end — just the movement.
