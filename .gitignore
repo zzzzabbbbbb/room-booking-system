@@ -51,3 +51,6 @@ temp/
 .agents/
 .claude/
 skills-lock.json
+
+# Source recordings — convert to .mp4 before committing
+*.mov
